@@ -1,0 +1,41 @@
+```{python}
+import pandas as pd
+import vega_datasets as vd
+import plotly.express as px
+import warnings
+import calendar
+```
+```{python}
+import pandas as pd
+
+acs_report = pd.read_csv("data/rootreport.csv")
+
+acs_report
+```
+
+```{python}
+pd.options.display.max_rows = 20
+
+```
+
+
+```{python}
+acs_report.Model.value_counts()
+```
+
+
+```{python}
+acs_report.Version.value_counts()
+```
+
+
+```{python}
+import plotly.express as px
+px.histogram(acs_report, x="Model", color= "Model",)
+```
+
+
+```{python}
+acs_report.groupby('Model')
+acs_report
+```

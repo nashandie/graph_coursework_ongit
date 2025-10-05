@@ -1,0 +1,3825 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="ELISE OPENI GUSTAV">
+
+<title>Workshop Exercise: Joining and Reshaping Data</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="week_09_workshop_exercise_files/libs/clipboard/clipboard.min.js"></script>
+<script src="week_09_workshop_exercise_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="week_09_workshop_exercise_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="week_09_workshop_exercise_files/libs/quarto-html/popper.min.js"></script>
+<script src="week_09_workshop_exercise_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="week_09_workshop_exercise_files/libs/quarto-html/anchor.min.js"></script>
+<link href="week_09_workshop_exercise_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="week_09_workshop_exercise_files/libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="week_09_workshop_exercise_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="week_09_workshop_exercise_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="week_09_workshop_exercise_files/libs/bootstrap/bootstrap-81267100e462c21b3d6c0d5bf76a3417.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Workshop Exercise: Joining and Reshaping Data</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>ELISE OPENI GUSTAV </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level1">
+<h1>1. Introduction</h1>
+<p>In this workshop, you’ll learn how to clean and analyze HIV and AIDS data across different countries and years. We will start with raw datasets containing estimates of new and total HIV cases per country-year. The goal is to clean and merge these datasets with population data.</p>
+</section>
+<section id="load-libraries" class="level1">
+<h1>2. Load Libraries</h1>
+<div id="6812a62c" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load libraries</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> country_converter <span class="im">as</span> coco</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-import" class="level1">
+<h1>3. Data Import</h1>
+<p>Download the datasets from the relevant link on the course page and unzip them if necessary.</p>
+<p>First, we import two raw datasets, each containing estimates per country-year. These data were accessed from the Gapminder foundation, at <a href="https://www.gapminder.org/data">www.gapminder.org/data</a>.</p>
+<ol type="1">
+<li><p><strong>People living with HIV:</strong> This dataset contains the total number of people currently infected with HIV (<em>data/hiv_prevalence.csv</em>).</p></li>
+<li><p><strong>New HIV infections:</strong> This dataset provides the total number of people newly infected with HIV during a given year (<em>data/hiv_incidence.csv</em>).</p></li>
+</ol>
+<p>Load the datasets into Python using <code>pd.read_csv()</code> then explore them to understand their structure.</p>
+<div id="0de6bea0" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load raw data from specified paths</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>total_hiv_raw <span class="op">=</span> pd.read_csv(<span class="st">"data/hiv_prevalence.csv"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>total_hiv_raw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country</th>
+<th data-quarto-table-cell-role="th">country_code</th>
+<th data-quarto-table-cell-role="th">2000</th>
+<th data-quarto-table-cell-role="th">2001</th>
+<th data-quarto-table-cell-role="th">2002</th>
+<th data-quarto-table-cell-role="th">2003</th>
+<th data-quarto-table-cell-role="th">2004</th>
+<th data-quarto-table-cell-role="th">2005</th>
+<th data-quarto-table-cell-role="th">2006</th>
+<th data-quarto-table-cell-role="th">2007</th>
+<th data-quarto-table-cell-role="th">2008</th>
+<th data-quarto-table-cell-role="th">2009</th>
+<th data-quarto-table-cell-role="th">2010</th>
+<th data-quarto-table-cell-role="th">2011</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>1900.0</td>
+<td>2000.0</td>
+<td>2200.0</td>
+<td>2400.0</td>
+<td>2700.0</td>
+<td>2900.0</td>
+<td>3200.0</td>
+<td>3600.0</td>
+<td>4100.0</td>
+<td>4600.0</td>
+<td>5200.0</td>
+<td>5800.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Angola</td>
+<td>AGO</td>
+<td>120000.0</td>
+<td>130000.0</td>
+<td>140000.0</td>
+<td>150000.0</td>
+<td>160000.0</td>
+<td>170000.0</td>
+<td>180000.0</td>
+<td>190000.0</td>
+<td>200000.0</td>
+<td>210000.0</td>
+<td>220000.0</td>
+<td>230000.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Argentina</td>
+<td>ARG</td>
+<td>64000.0</td>
+<td>66000.0</td>
+<td>68000.0</td>
+<td>71000.0</td>
+<td>74000.0</td>
+<td>77000.0</td>
+<td>80000.0</td>
+<td>83000.0</td>
+<td>86000.0</td>
+<td>90000.0</td>
+<td>92000.0</td>
+<td>95000.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Armenia</td>
+<td>ARM</td>
+<td>3200.0</td>
+<td>3500.0</td>
+<td>3700.0</td>
+<td>3800.0</td>
+<td>3800.0</td>
+<td>3800.0</td>
+<td>3800.0</td>
+<td>3700.0</td>
+<td>3600.0</td>
+<td>3600.0</td>
+<td>3500.0</td>
+<td>3600.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Australia</td>
+<td>AUS</td>
+<td>12000.0</td>
+<td>13000.0</td>
+<td>14000.0</td>
+<td>14000.0</td>
+<td>15000.0</td>
+<td>16000.0</td>
+<td>17000.0</td>
+<td>18000.0</td>
+<td>19000.0</td>
+<td>20000.0</td>
+<td>21000.0</td>
+<td>22000.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">143</td>
+<td>Vietnam</td>
+<td>VNM</td>
+<td>84000.0</td>
+<td>110000.0</td>
+<td>130000.0</td>
+<td>160000.0</td>
+<td>180000.0</td>
+<td>190000.0</td>
+<td>210000.0</td>
+<td>220000.0</td>
+<td>230000.0</td>
+<td>230000.0</td>
+<td>240000.0</td>
+<td>250000.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">144</td>
+<td>Yemen</td>
+<td>YEM</td>
+<td>8500.0</td>
+<td>10000.0</td>
+<td>12000.0</td>
+<td>14000.0</td>
+<td>15000.0</td>
+<td>16000.0</td>
+<td>17000.0</td>
+<td>18000.0</td>
+<td>19000.0</td>
+<td>20000.0</td>
+<td>21000.0</td>
+<td>22000.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">145</td>
+<td>South Africa</td>
+<td>ZAF</td>
+<td>4000000.0</td>
+<td>4400000.0</td>
+<td>4700000.0</td>
+<td>4900000.0</td>
+<td>5000000.0</td>
+<td>5200000.0</td>
+<td>5200000.0</td>
+<td>5300000.0</td>
+<td>5400000.0</td>
+<td>5400000.0</td>
+<td>5500000.0</td>
+<td>5600000.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">146</td>
+<td>Zambia</td>
+<td>ZMB</td>
+<td>840000.0</td>
+<td>860000.0</td>
+<td>880000.0</td>
+<td>900000.0</td>
+<td>910000.0</td>
+<td>920000.0</td>
+<td>920000.0</td>
+<td>930000.0</td>
+<td>940000.0</td>
+<td>950000.0</td>
+<td>960000.0</td>
+<td>970000.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">147</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>1900000.0</td>
+<td>1800000.0</td>
+<td>1700000.0</td>
+<td>1700000.0</td>
+<td>1600000.0</td>
+<td>1500000.0</td>
+<td>1400000.0</td>
+<td>1300000.0</td>
+<td>1300000.0</td>
+<td>1200000.0</td>
+<td>1200000.0</td>
+<td>1200000.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>148 rows × 14 columns</p>
+</div>
+</div>
+</div>
+<div id="5b9b4d97" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>new_hiv_raw <span class="op">=</span> pd.read_csv(<span class="st">"data/hiv_incidence.csv"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>new_hiv_raw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country</th>
+<th data-quarto-table-cell-role="th">country_code</th>
+<th data-quarto-table-cell-role="th">2000</th>
+<th data-quarto-table-cell-role="th">2001</th>
+<th data-quarto-table-cell-role="th">2002</th>
+<th data-quarto-table-cell-role="th">2003</th>
+<th data-quarto-table-cell-role="th">2004</th>
+<th data-quarto-table-cell-role="th">2005</th>
+<th data-quarto-table-cell-role="th">2006</th>
+<th data-quarto-table-cell-role="th">2007</th>
+<th data-quarto-table-cell-role="th">2008</th>
+<th data-quarto-table-cell-role="th">2009</th>
+<th data-quarto-table-cell-role="th">2010</th>
+<th data-quarto-table-cell-role="th">2011</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>1100.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Angola</td>
+<td>AGO</td>
+<td>19000.0</td>
+<td>20000.0</td>
+<td>21000.0</td>
+<td>22000.0</td>
+<td>23000.0</td>
+<td>23000.0</td>
+<td>24000.0</td>
+<td>24000.0</td>
+<td>24000.0</td>
+<td>24000.0</td>
+<td>24000.0</td>
+<td>23000.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Argentina</td>
+<td>ARG</td>
+<td>7000.0</td>
+<td>7300.0</td>
+<td>7400.0</td>
+<td>7500.0</td>
+<td>7600.0</td>
+<td>7700.0</td>
+<td>7700.0</td>
+<td>7600.0</td>
+<td>7500.0</td>
+<td>7500.0</td>
+<td>NaN</td>
+<td>5600.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Armenia</td>
+<td>ARM</td>
+<td>120.0</td>
+<td>120.0</td>
+<td>120.0</td>
+<td>120.0</td>
+<td>120.0</td>
+<td>120.0</td>
+<td>120.0</td>
+<td>120.0</td>
+<td>300.0</td>
+<td>300.0</td>
+<td>NaN</td>
+<td>350.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Australia</td>
+<td>AUS</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>1100.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">137</td>
+<td>Vietnam</td>
+<td>VNM</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>21000.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">138</td>
+<td>Yemen</td>
+<td>YEM</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>2600.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">139</td>
+<td>South Africa</td>
+<td>ZAF</td>
+<td>660000.0</td>
+<td>610000.0</td>
+<td>560000.0</td>
+<td>520000.0</td>
+<td>500000.0</td>
+<td>480000.0</td>
+<td>470000.0</td>
+<td>460000.0</td>
+<td>450000.0</td>
+<td>430000.0</td>
+<td>390000.0</td>
+<td>380000.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">140</td>
+<td>Zambia</td>
+<td>ZMB</td>
+<td>90000.0</td>
+<td>92000.0</td>
+<td>94000.0</td>
+<td>96000.0</td>
+<td>96000.0</td>
+<td>93000.0</td>
+<td>88000.0</td>
+<td>81000.0</td>
+<td>72000.0</td>
+<td>76000.0</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">141</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>160000.0</td>
+<td>140000.0</td>
+<td>130000.0</td>
+<td>110000.0</td>
+<td>110000.0</td>
+<td>110000.0</td>
+<td>100000.0</td>
+<td>100000.0</td>
+<td>100000.0</td>
+<td>95000.0</td>
+<td>87000.0</td>
+<td>74000.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>142 rows × 14 columns</p>
+</div>
+</div>
+</div>
+<p>Now, we import data on population estimates per country per year from the World Bank:</p>
+<div id="46de56b0" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load population data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>population <span class="op">=</span> pd.read_csv(<span class="st">"data/population_estimates_world_bank.csv"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>population</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country</th>
+<th data-quarto-table-cell-role="th">indicator</th>
+<th data-quarto-table-cell-role="th">2000</th>
+<th data-quarto-table-cell-role="th">2001</th>
+<th data-quarto-table-cell-role="th">2002</th>
+<th data-quarto-table-cell-role="th">2003</th>
+<th data-quarto-table-cell-role="th">2004</th>
+<th data-quarto-table-cell-role="th">2005</th>
+<th data-quarto-table-cell-role="th">2006</th>
+<th data-quarto-table-cell-role="th">2007</th>
+<th data-quarto-table-cell-role="th">2008</th>
+<th data-quarto-table-cell-role="th">2009</th>
+<th data-quarto-table-cell-role="th">2010</th>
+<th data-quarto-table-cell-role="th">2011</th>
+<th data-quarto-table-cell-role="th">2012</th>
+<th data-quarto-table-cell-role="th">2013</th>
+<th data-quarto-table-cell-role="th">2014</th>
+<th data-quarto-table-cell-role="th">2015</th>
+<th data-quarto-table-cell-role="th">2016</th>
+<th data-quarto-table-cell-role="th">2017</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>ABW</td>
+<td>SP.URB.TOTL</td>
+<td>4.162500e+04</td>
+<td>4.202500e+04</td>
+<td>4.219400e+04</td>
+<td>4.227700e+04</td>
+<td>4.231700e+04</td>
+<td>4.239900e+04</td>
+<td>4.255500e+04</td>
+<td>4.272900e+04</td>
+<td>4.290600e+04</td>
+<td>4.307900e+04</td>
+<td>4.320600e+04</td>
+<td>4.349300e+04</td>
+<td>4.386400e+04</td>
+<td>4.422800e+04</td>
+<td>4.458800e+04</td>
+<td>4.494300e+04</td>
+<td>4.529700e+04</td>
+<td>4.564800e+04</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>ABW</td>
+<td>SP.URB.GROW</td>
+<td>1.664222e+00</td>
+<td>9.563731e-01</td>
+<td>4.013352e-01</td>
+<td>1.965172e-01</td>
+<td>9.456936e-02</td>
+<td>1.935880e-01</td>
+<td>3.672580e-01</td>
+<td>4.080490e-01</td>
+<td>4.133830e-01</td>
+<td>4.023963e-01</td>
+<td>2.943735e-01</td>
+<td>6.620631e-01</td>
+<td>8.493932e-01</td>
+<td>8.264135e-01</td>
+<td>8.106692e-01</td>
+<td>7.930256e-01</td>
+<td>7.845785e-01</td>
+<td>7.718989e-01</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>ABW</td>
+<td>SP.POP.TOTL</td>
+<td>8.910100e+04</td>
+<td>9.069100e+04</td>
+<td>9.178100e+04</td>
+<td>9.270100e+04</td>
+<td>9.354000e+04</td>
+<td>9.448300e+04</td>
+<td>9.560600e+04</td>
+<td>9.678700e+04</td>
+<td>9.799600e+04</td>
+<td>9.921200e+04</td>
+<td>1.003410e+05</td>
+<td>1.012880e+05</td>
+<td>1.021120e+05</td>
+<td>1.028800e+05</td>
+<td>1.035940e+05</td>
+<td>1.042570e+05</td>
+<td>1.048740e+05</td>
+<td>1.054390e+05</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>ABW</td>
+<td>SP.POP.GROW</td>
+<td>2.539234e+00</td>
+<td>1.768757e+00</td>
+<td>1.194718e+00</td>
+<td>9.973955e-01</td>
+<td>9.009892e-01</td>
+<td>1.003077e+00</td>
+<td>1.181566e+00</td>
+<td>1.227711e+00</td>
+<td>1.241397e+00</td>
+<td>1.233231e+00</td>
+<td>1.131541e+00</td>
+<td>9.393559e-01</td>
+<td>8.102306e-01</td>
+<td>7.493010e-01</td>
+<td>6.916153e-01</td>
+<td>6.379592e-01</td>
+<td>5.900625e-01</td>
+<td>5.372957e-01</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>AFE</td>
+<td>SP.URB.TOTL</td>
+<td>1.155517e+08</td>
+<td>1.197755e+08</td>
+<td>1.242275e+08</td>
+<td>1.288340e+08</td>
+<td>1.336475e+08</td>
+<td>1.387456e+08</td>
+<td>1.440267e+08</td>
+<td>1.492313e+08</td>
+<td>1.553838e+08</td>
+<td>1.617762e+08</td>
+<td>1.684561e+08</td>
+<td>1.754157e+08</td>
+<td>1.825587e+08</td>
+<td>1.901087e+08</td>
+<td>1.980733e+08</td>
+<td>2.065563e+08</td>
+<td>2.150833e+08</td>
+<td>2.237321e+08</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1059</td>
+<td>ZMB</td>
+<td>SP.POP.GROW</td>
+<td>2.766606e+00</td>
+<td>2.996056e+00</td>
+<td>3.056528e+00</td>
+<td>3.089114e+00</td>
+<td>3.178936e+00</td>
+<td>3.312670e+00</td>
+<td>3.456237e+00</td>
+<td>3.532921e+00</td>
+<td>3.571097e+00</td>
+<td>3.554843e+00</td>
+<td>3.497191e+00</td>
+<td>3.377110e+00</td>
+<td>3.301480e+00</td>
+<td>3.271299e+00</td>
+<td>3.247118e+00</td>
+<td>3.191896e+00</td>
+<td>3.147407e+00</td>
+<td>3.113595e+00</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1060</td>
+<td>ZWE</td>
+<td>SP.URB.TOTL</td>
+<td>3.995150e+06</td>
+<td>4.069981e+06</td>
+<td>4.144889e+06</td>
+<td>4.163625e+06</td>
+<td>4.170453e+06</td>
+<td>4.169863e+06</td>
+<td>4.183242e+06</td>
+<td>4.201195e+06</td>
+<td>4.211896e+06</td>
+<td>4.232267e+06</td>
+<td>4.262290e+06</td>
+<td>4.300463e+06</td>
+<td>4.355539e+06</td>
+<td>4.426387e+06</td>
+<td>4.503674e+06</td>
+<td>4.584076e+06</td>
+<td>4.667645e+06</td>
+<td>4.755312e+06</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1061</td>
+<td>ZWE</td>
+<td>SP.URB.GROW</td>
+<td>2.228930e+00</td>
+<td>1.855721e+00</td>
+<td>1.823768e+00</td>
+<td>4.510080e-01</td>
+<td>1.638574e-01</td>
+<td>-1.414815e-02</td>
+<td>3.203362e-01</td>
+<td>4.282465e-01</td>
+<td>2.543894e-01</td>
+<td>4.824881e-01</td>
+<td>7.068791e-01</td>
+<td>8.916117e-01</td>
+<td>1.272568e+00</td>
+<td>1.613531e+00</td>
+<td>1.730983e+00</td>
+<td>1.769505e+00</td>
+<td>1.806610e+00</td>
+<td>1.860765e+00</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1062</td>
+<td>ZWE</td>
+<td>SP.POP.TOTL</td>
+<td>1.183468e+07</td>
+<td>1.191098e+07</td>
+<td>1.198464e+07</td>
+<td>1.207583e+07</td>
+<td>1.216088e+07</td>
+<td>1.222475e+07</td>
+<td>1.233049e+07</td>
+<td>1.245057e+07</td>
+<td>1.255035e+07</td>
+<td>1.267981e+07</td>
+<td>1.283977e+07</td>
+<td>1.302578e+07</td>
+<td>1.326533e+07</td>
+<td>1.355542e+07</td>
+<td>1.385575e+07</td>
+<td>1.415494e+07</td>
+<td>1.445270e+07</td>
+<td>1.475110e+07</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1063</td>
+<td>ZWE</td>
+<td>SP.POP.GROW</td>
+<td>1.003969e+00</td>
+<td>6.426630e-01</td>
+<td>6.165668e-01</td>
+<td>7.579605e-01</td>
+<td>7.018556e-01</td>
+<td>5.238506e-01</td>
+<td>8.612226e-01</td>
+<td>9.691188e-01</td>
+<td>7.982070e-01</td>
+<td>1.026265e+00</td>
+<td>1.253650e+00</td>
+<td>1.438339e+00</td>
+<td>1.822309e+00</td>
+<td>2.163267e+00</td>
+<td>2.191391e+00</td>
+<td>2.136294e+00</td>
+<td>2.081806e+00</td>
+<td>2.043620e+00</td>
+</tr>
+</tbody>
+</table>
+
+<p>1064 rows × 20 columns</p>
+</div>
+</div>
+</div>
+</section>
+<section id="reshape-data" class="level1">
+<h1>4. Reshape Data</h1>
+<p>Now that we have imported the data it’s time to reshape it.</p>
+<p>The datasets are currently in wide format, with each year as a separate column, something like this:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>country</th>
+<th>1990</th>
+<th>1991</th>
+<th>1992</th>
+<th>1993</th>
+<th>1994</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Afghanistan</td>
+<td>600</td>
+<td>600</td>
+<td>1000</td>
+<td>1100</td>
+<td>1200</td>
+</tr>
+<tr class="even">
+<td>Angola</td>
+<td>33000</td>
+<td>39000</td>
+<td>46000</td>
+<td>54000</td>
+<td>62000</td>
+</tr>
+<tr class="odd">
+<td>Argentina</td>
+<td>27000</td>
+<td>31000</td>
+<td>35000</td>
+<td>39000</td>
+<td>43000</td>
+</tr>
+<tr class="even">
+<td>Armenia</td>
+<td>350</td>
+<td>600</td>
+<td>600</td>
+<td>600</td>
+<td>1000</td>
+</tr>
+<tr class="odd">
+<td>Australia</td>
+<td>12000</td>
+<td>12000</td>
+<td>12000</td>
+<td>11000</td>
+<td>11000</td>
+</tr>
+<tr class="even">
+<td>Austria</td>
+<td>600</td>
+<td>600</td>
+<td>1000</td>
+<td>1300</td>
+<td>1500</td>
+</tr>
+</tbody>
+</table>
+<p>We need to convert this to long format, where each row represents a single year-country combination.</p>
+<p>For example:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>country</th>
+<th>year</th>
+<th>cases</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Afghanistan</td>
+<td>1990</td>
+<td>600</td>
+</tr>
+<tr class="even">
+<td>Afghanistan</td>
+<td>1991</td>
+<td>600</td>
+</tr>
+<tr class="odd">
+<td>Afghanistan</td>
+<td>1992</td>
+<td>1000</td>
+</tr>
+<tr class="even">
+<td>Afghanistan</td>
+<td>1993</td>
+<td>1100</td>
+</tr>
+<tr class="odd">
+<td>Afghanistan</td>
+<td>1994</td>
+<td>1200</td>
+</tr>
+</tbody>
+</table>
+<section id="instructions-for-reshaping-new_hiv_raw-data" class="level2">
+<h2 class="anchored" data-anchor-id="instructions-for-reshaping-new_hiv_raw-data">4.1 Instructions for Reshaping <code>new_hiv_raw</code> Data</h2>
+<p>Reshape the <code>new_hiv_raw</code> dataset by converting the columns that represent different years into a new column called <code>year</code>, and place the corresponding values into a new column called <code>new_cases</code>.</p>
+<p>Hints:</p>
+<ol type="1">
+<li>Use <code>melt()</code> on <code>new_hiv_raw</code>.</li>
+<li>Exclude the <code>country</code> and <code>country_code</code> columns from being melted by specifying <code>id_vars=['country', 'country_code']</code>.</li>
+<li>Set the names of the new columns inside <code>melt()</code> using:
+<ul>
+<li><code>var_name='year'</code> to label the column that will store the years.</li>
+<li><code>value_name='new_cases'</code> to store the values representing new HIV cases under the <code>new_cases</code> column.</li>
+</ul></li>
+</ol>
+<div id="7990ec42" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reshape new_hiv_raw to long format</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>new_hiv_long <span class="op">=</span> new_hiv_raw.melt(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    id_vars<span class="op">=</span>[<span class="st">'country'</span>, <span class="st">'country_code'</span>],</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    var_name<span class="op">=</span><span class="st">'year'</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    value_name<span class="op">=</span><span class="st">'new_cases'</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    ).sort_values(by<span class="op">=</span>[<span class="st">'country'</span>,<span class="st">'country_code'</span>])</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>new_hiv_long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country</th>
+<th data-quarto-table-cell-role="th">country_code</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">new_cases</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2000</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">142</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2001</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">284</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2002</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">426</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2003</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">568</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2004</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1135</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2007</td>
+<td>100000.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1277</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2008</td>
+<td>100000.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1419</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2009</td>
+<td>95000.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1561</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2010</td>
+<td>87000.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1703</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2011</td>
+<td>74000.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>1704 rows × 4 columns</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="instructions-for-reshaping-total_hiv_raw-data" class="level2">
+<h2 class="anchored" data-anchor-id="instructions-for-reshaping-total_hiv_raw-data">4.2 Instructions for Reshaping <code>total_hiv_raw</code> Data</h2>
+<p>In a similar manner, reshape the <code>total_hiv_raw</code> dataset to a long format. Convert the year columns into a new column called <code>year</code> and the counts into <code>total_cases</code>.</p>
+<div id="6ead0e2c" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reshape total_hiv_raw to long format</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>total_hiv_long <span class="op">=</span> total_hiv_raw.melt(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    id_vars<span class="op">=</span>[<span class="st">'country'</span>, <span class="st">'country_code'</span>],</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    var_name<span class="op">=</span><span class="st">'year'</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    value_name<span class="op">=</span><span class="st">'total_cases'</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    ).sort_values(by<span class="op">=</span>[<span class="st">'country'</span>,<span class="st">'country_code'</span>])</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>total_hiv_long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country</th>
+<th data-quarto-table-cell-role="th">country_code</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">total_cases</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2000</td>
+<td>1900.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">148</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2001</td>
+<td>2000.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">296</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2002</td>
+<td>2200.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">444</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2003</td>
+<td>2400.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">592</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2004</td>
+<td>2700.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1183</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2007</td>
+<td>1300000.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1331</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2008</td>
+<td>1300000.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1479</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2009</td>
+<td>1200000.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1627</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2010</td>
+<td>1200000.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1775</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2011</td>
+<td>1200000.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>1776 rows × 4 columns</p>
+</div>
+</div>
+</div>
+<p><strong>CHECKPOINT:</strong></p>
+<p>After performing these steps, make sure that you have two reshaped datasets:</p>
+<ul>
+<li><code>new_hiv_long</code> with <strong>4 columns</strong>: <code>country</code>, <code>country_code</code>, <code>year</code>, and <code>new_cases</code>.</li>
+<li><code>total_hiv_long</code> with <strong>4 columns</strong>: <code>country</code>, <code>country_code</code>, <code>year</code>, and <code>total_cases</code>.</li>
+</ul>
+</section>
+</section>
+<section id="joining-the-hiv-datasets" class="level1">
+<h1>5. Joining the HIV Datasets</h1>
+<p>Now that both datasets are in long format, we can join them.</p>
+<p>Note that you need to use the <code>country</code>, <code>country_code</code>, and <code>year</code> columns as the keys (<code>on=['country', 'country_code', 'year']</code>).</p>
+<p>Use <code>pd.merge()</code> with <code>how='outer'</code> so that we can keep as much information as possible.</p>
+<div id="9b70b4a1" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Join the two datasets</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>hiv_data_combined <span class="op">=</span> pd.merge(new_hiv_long,total_hiv_long,on<span class="op">=</span>[<span class="st">'country'</span>, <span class="st">'country_code'</span>, <span class="st">'year'</span>], how <span class="op">=</span> <span class="st">'outer'</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>hiv_data_combined</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country</th>
+<th data-quarto-table-cell-role="th">country_code</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">new_cases</th>
+<th data-quarto-table-cell-role="th">total_cases</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2000</td>
+<td>NaN</td>
+<td>1900.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2001</td>
+<td>NaN</td>
+<td>2000.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2002</td>
+<td>NaN</td>
+<td>2200.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2003</td>
+<td>NaN</td>
+<td>2400.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2004</td>
+<td>NaN</td>
+<td>2700.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1771</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2007</td>
+<td>100000.0</td>
+<td>1300000.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1772</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2008</td>
+<td>100000.0</td>
+<td>1300000.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1773</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2009</td>
+<td>95000.0</td>
+<td>1200000.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1774</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2010</td>
+<td>87000.0</td>
+<td>1200000.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1775</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2011</td>
+<td>74000.0</td>
+<td>1200000.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>1776 rows × 5 columns</p>
+</div>
+</div>
+</div>
+<p><strong>CHECKPOINT:</strong> The combined dataset should have columns for <code>country</code>, <code>country_code</code>, <code>year</code>, <code>total_cases</code>, and <code>new_cases</code>. There may some missing values; that is okay.</p>
+</section>
+<section id="add-population-data" class="level1">
+<h1>6. Add Population Data</h1>
+<p>The <code>population</code> dataset contains information on population per year from 2000 to 2017.</p>
+<div id="f189f414" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>population.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country</th>
+<th data-quarto-table-cell-role="th">indicator</th>
+<th data-quarto-table-cell-role="th">2000</th>
+<th data-quarto-table-cell-role="th">2001</th>
+<th data-quarto-table-cell-role="th">2002</th>
+<th data-quarto-table-cell-role="th">2003</th>
+<th data-quarto-table-cell-role="th">2004</th>
+<th data-quarto-table-cell-role="th">2005</th>
+<th data-quarto-table-cell-role="th">2006</th>
+<th data-quarto-table-cell-role="th">2007</th>
+<th data-quarto-table-cell-role="th">2008</th>
+<th data-quarto-table-cell-role="th">2009</th>
+<th data-quarto-table-cell-role="th">2010</th>
+<th data-quarto-table-cell-role="th">2011</th>
+<th data-quarto-table-cell-role="th">2012</th>
+<th data-quarto-table-cell-role="th">2013</th>
+<th data-quarto-table-cell-role="th">2014</th>
+<th data-quarto-table-cell-role="th">2015</th>
+<th data-quarto-table-cell-role="th">2016</th>
+<th data-quarto-table-cell-role="th">2017</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>ABW</td>
+<td>SP.URB.TOTL</td>
+<td>4.162500e+04</td>
+<td>4.202500e+04</td>
+<td>4.219400e+04</td>
+<td>4.227700e+04</td>
+<td>4.231700e+04</td>
+<td>4.239900e+04</td>
+<td>4.255500e+04</td>
+<td>4.272900e+04</td>
+<td>4.290600e+04</td>
+<td>4.307900e+04</td>
+<td>4.320600e+04</td>
+<td>4.349300e+04</td>
+<td>4.386400e+04</td>
+<td>4.422800e+04</td>
+<td>4.458800e+04</td>
+<td>4.494300e+04</td>
+<td>4.529700e+04</td>
+<td>4.564800e+04</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>ABW</td>
+<td>SP.URB.GROW</td>
+<td>1.664222e+00</td>
+<td>9.563731e-01</td>
+<td>4.013352e-01</td>
+<td>1.965172e-01</td>
+<td>9.456936e-02</td>
+<td>1.935880e-01</td>
+<td>3.672580e-01</td>
+<td>4.080490e-01</td>
+<td>4.133830e-01</td>
+<td>4.023963e-01</td>
+<td>2.943735e-01</td>
+<td>6.620631e-01</td>
+<td>8.493932e-01</td>
+<td>8.264135e-01</td>
+<td>8.106692e-01</td>
+<td>7.930256e-01</td>
+<td>7.845785e-01</td>
+<td>7.718989e-01</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>ABW</td>
+<td>SP.POP.TOTL</td>
+<td>8.910100e+04</td>
+<td>9.069100e+04</td>
+<td>9.178100e+04</td>
+<td>9.270100e+04</td>
+<td>9.354000e+04</td>
+<td>9.448300e+04</td>
+<td>9.560600e+04</td>
+<td>9.678700e+04</td>
+<td>9.799600e+04</td>
+<td>9.921200e+04</td>
+<td>1.003410e+05</td>
+<td>1.012880e+05</td>
+<td>1.021120e+05</td>
+<td>1.028800e+05</td>
+<td>1.035940e+05</td>
+<td>1.042570e+05</td>
+<td>1.048740e+05</td>
+<td>1.054390e+05</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>ABW</td>
+<td>SP.POP.GROW</td>
+<td>2.539234e+00</td>
+<td>1.768757e+00</td>
+<td>1.194718e+00</td>
+<td>9.973955e-01</td>
+<td>9.009892e-01</td>
+<td>1.003077e+00</td>
+<td>1.181566e+00</td>
+<td>1.227711e+00</td>
+<td>1.241397e+00</td>
+<td>1.233231e+00</td>
+<td>1.131541e+00</td>
+<td>9.393559e-01</td>
+<td>8.102306e-01</td>
+<td>7.493010e-01</td>
+<td>6.916153e-01</td>
+<td>6.379592e-01</td>
+<td>5.900625e-01</td>
+<td>5.372957e-01</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>AFE</td>
+<td>SP.URB.TOTL</td>
+<td>1.155517e+08</td>
+<td>1.197755e+08</td>
+<td>1.242275e+08</td>
+<td>1.288340e+08</td>
+<td>1.336475e+08</td>
+<td>1.387456e+08</td>
+<td>1.440267e+08</td>
+<td>1.492313e+08</td>
+<td>1.553838e+08</td>
+<td>1.617762e+08</td>
+<td>1.684561e+08</td>
+<td>1.754157e+08</td>
+<td>1.825587e+08</td>
+<td>1.901087e+08</td>
+<td>1.980733e+08</td>
+<td>2.065563e+08</td>
+<td>2.150833e+08</td>
+<td>2.237321e+08</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Note that we are interested in the total population of each country, which is labelled <code>SP.POP.TOTL</code> in the dataset.</p>
+<p>Additionally, note that the <code>country</code> column doesn’t have full country names, but the 3-letter country codes.</p>
+<p>This will make it easier to join with our HIV dataset, since country codes are consistent across datasets (unlike full country names).</p>
+<section id="filter-and-prepare-population-data" class="level2">
+<h2 class="anchored" data-anchor-id="filter-and-prepare-population-data">6.1 Filter and Prepare Population Data</h2>
+<p>Next, complete the following transformations on the <code>population</code> dataset:</p>
+<ul>
+<li>Query the data to just the <code>SP.POP.TOTL</code> indicator</li>
+<li>Melt the data to a long format.</li>
+<li>Rename the “country” column to “country_code” so that we can join it properly later on.</li>
+<li>Drop the <code>indicator</code> column.</li>
+</ul>
+<p>Store your final result as <code>population_long</code>.</p>
+<div id="18d7bb82" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Your code here</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Query the data to just show the `SP.POP.TOTL` indicator</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>total_population <span class="op">=</span> population[</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    population[<span class="st">'indicator'</span>] <span class="op">==</span> <span class="st">'SP.POP.TOTL'</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>total_population</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country</th>
+<th data-quarto-table-cell-role="th">indicator</th>
+<th data-quarto-table-cell-role="th">2000</th>
+<th data-quarto-table-cell-role="th">2001</th>
+<th data-quarto-table-cell-role="th">2002</th>
+<th data-quarto-table-cell-role="th">2003</th>
+<th data-quarto-table-cell-role="th">2004</th>
+<th data-quarto-table-cell-role="th">2005</th>
+<th data-quarto-table-cell-role="th">2006</th>
+<th data-quarto-table-cell-role="th">2007</th>
+<th data-quarto-table-cell-role="th">2008</th>
+<th data-quarto-table-cell-role="th">2009</th>
+<th data-quarto-table-cell-role="th">2010</th>
+<th data-quarto-table-cell-role="th">2011</th>
+<th data-quarto-table-cell-role="th">2012</th>
+<th data-quarto-table-cell-role="th">2013</th>
+<th data-quarto-table-cell-role="th">2014</th>
+<th data-quarto-table-cell-role="th">2015</th>
+<th data-quarto-table-cell-role="th">2016</th>
+<th data-quarto-table-cell-role="th">2017</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>ABW</td>
+<td>SP.POP.TOTL</td>
+<td>89101.0</td>
+<td>90691.0</td>
+<td>91781.0</td>
+<td>92701.0</td>
+<td>93540.0</td>
+<td>94483.0</td>
+<td>95606.0</td>
+<td>96787.0</td>
+<td>97996.0</td>
+<td>99212.0</td>
+<td>100341.0</td>
+<td>101288.0</td>
+<td>102112.0</td>
+<td>102880.0</td>
+<td>103594.0</td>
+<td>104257.0</td>
+<td>104874.0</td>
+<td>105439.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">6</td>
+<td>AFE</td>
+<td>SP.POP.TOTL</td>
+<td>401600588.0</td>
+<td>412001885.0</td>
+<td>422741118.0</td>
+<td>433807484.0</td>
+<td>445281555.0</td>
+<td>457153837.0</td>
+<td>469508516.0</td>
+<td>482406426.0</td>
+<td>495748900.0</td>
+<td>509410477.0</td>
+<td>523459657.0</td>
+<td>537792950.0</td>
+<td>552530654.0</td>
+<td>567891875.0</td>
+<td>583650827.0</td>
+<td>600008150.0</td>
+<td>616377331.0</td>
+<td>632746296.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10</td>
+<td>AFG</td>
+<td>SP.POP.TOTL</td>
+<td>19542982.0</td>
+<td>19688632.0</td>
+<td>21000256.0</td>
+<td>22645130.0</td>
+<td>23553551.0</td>
+<td>24411191.0</td>
+<td>25442944.0</td>
+<td>25903301.0</td>
+<td>26427199.0</td>
+<td>27385307.0</td>
+<td>28189672.0</td>
+<td>29249157.0</td>
+<td>30466479.0</td>
+<td>31541209.0</td>
+<td>32716210.0</td>
+<td>33753499.0</td>
+<td>34636207.0</td>
+<td>35643418.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">14</td>
+<td>AFW</td>
+<td>SP.POP.TOTL</td>
+<td>269611898.0</td>
+<td>277160097.0</td>
+<td>284952322.0</td>
+<td>292977949.0</td>
+<td>301265247.0</td>
+<td>309824829.0</td>
+<td>318601484.0</td>
+<td>327612838.0</td>
+<td>336893835.0</td>
+<td>346475221.0</td>
+<td>356337762.0</td>
+<td>366489204.0</td>
+<td>376797999.0</td>
+<td>387204553.0</td>
+<td>397855507.0</td>
+<td>408690375.0</td>
+<td>419778384.0</td>
+<td>431138704.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">18</td>
+<td>AGO</td>
+<td>SP.POP.TOTL</td>
+<td>16394062.0</td>
+<td>16941587.0</td>
+<td>17516139.0</td>
+<td>18124342.0</td>
+<td>18771125.0</td>
+<td>19450959.0</td>
+<td>20162340.0</td>
+<td>20909684.0</td>
+<td>21691522.0</td>
+<td>22507674.0</td>
+<td>23364185.0</td>
+<td>24259111.0</td>
+<td>25188292.0</td>
+<td>26147002.0</td>
+<td>27128337.0</td>
+<td>28127721.0</td>
+<td>29154746.0</td>
+<td>30208628.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1046</td>
+<td>XKX</td>
+<td>SP.POP.TOTL</td>
+<td>1700000.0</td>
+<td>1701154.0</td>
+<td>1702310.0</td>
+<td>1703466.0</td>
+<td>1704622.0</td>
+<td>1705780.0</td>
+<td>1719536.0</td>
+<td>1733404.0</td>
+<td>1747383.0</td>
+<td>1761474.0</td>
+<td>1775680.0</td>
+<td>1791000.0</td>
+<td>1807106.0</td>
+<td>1818117.0</td>
+<td>1812771.0</td>
+<td>1788196.0</td>
+<td>1777557.0</td>
+<td>1791003.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1050</td>
+<td>YEM</td>
+<td>SP.POP.TOTL</td>
+<td>18628700.0</td>
+<td>19143457.0</td>
+<td>19660653.0</td>
+<td>20188799.0</td>
+<td>20733406.0</td>
+<td>21320671.0</td>
+<td>21966298.0</td>
+<td>22641538.0</td>
+<td>23329004.0</td>
+<td>24029589.0</td>
+<td>24743946.0</td>
+<td>25475610.0</td>
+<td>26223391.0</td>
+<td>26984002.0</td>
+<td>27753304.0</td>
+<td>28516545.0</td>
+<td>29274002.0</td>
+<td>30034389.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1054</td>
+<td>ZAF</td>
+<td>SP.POP.TOTL</td>
+<td>46813266.0</td>
+<td>47229714.0</td>
+<td>47661514.0</td>
+<td>48104048.0</td>
+<td>48556071.0</td>
+<td>49017147.0</td>
+<td>49491756.0</td>
+<td>49996094.0</td>
+<td>50565812.0</td>
+<td>51170779.0</td>
+<td>51784921.0</td>
+<td>52443325.0</td>
+<td>53145033.0</td>
+<td>53873616.0</td>
+<td>54729551.0</td>
+<td>55876504.0</td>
+<td>56422274.0</td>
+<td>56641209.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1058</td>
+<td>ZMB</td>
+<td>SP.POP.TOTL</td>
+<td>9891136.0</td>
+<td>10191964.0</td>
+<td>10508294.0</td>
+<td>10837973.0</td>
+<td>11188040.0</td>
+<td>11564870.0</td>
+<td>11971567.0</td>
+<td>12402073.0</td>
+<td>12852966.0</td>
+<td>13318087.0</td>
+<td>13792086.0</td>
+<td>14265814.0</td>
+<td>14744658.0</td>
+<td>15234976.0</td>
+<td>15737793.0</td>
+<td>16248230.0</td>
+<td>16767761.0</td>
+<td>17298054.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1062</td>
+<td>ZWE</td>
+<td>SP.POP.TOTL</td>
+<td>11834676.0</td>
+<td>11910978.0</td>
+<td>11984644.0</td>
+<td>12075828.0</td>
+<td>12160881.0</td>
+<td>12224753.0</td>
+<td>12330490.0</td>
+<td>12450568.0</td>
+<td>12550347.0</td>
+<td>12679810.0</td>
+<td>12839771.0</td>
+<td>13025785.0</td>
+<td>13265331.0</td>
+<td>13555422.0</td>
+<td>13855753.0</td>
+<td>14154937.0</td>
+<td>14452704.0</td>
+<td>14751101.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>266 rows × 20 columns</p>
+</div>
+</div>
+</div>
+<div id="ebd58256" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Melt the data to a long format.</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>population_long <span class="op">=</span> total_population.melt(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    id_vars<span class="op">=</span>[<span class="st">'country'</span>,<span class="st">'indicator'</span>],</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    var_name<span class="op">=</span><span class="st">'year'</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    value_name<span class="op">=</span><span class="st">'population'</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>population_long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country</th>
+<th data-quarto-table-cell-role="th">indicator</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">population</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>ABW</td>
+<td>SP.POP.TOTL</td>
+<td>2000</td>
+<td>89101.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>AFE</td>
+<td>SP.POP.TOTL</td>
+<td>2000</td>
+<td>401600588.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>AFG</td>
+<td>SP.POP.TOTL</td>
+<td>2000</td>
+<td>19542982.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>AFW</td>
+<td>SP.POP.TOTL</td>
+<td>2000</td>
+<td>269611898.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>AGO</td>
+<td>SP.POP.TOTL</td>
+<td>2000</td>
+<td>16394062.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4783</td>
+<td>XKX</td>
+<td>SP.POP.TOTL</td>
+<td>2017</td>
+<td>1791003.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4784</td>
+<td>YEM</td>
+<td>SP.POP.TOTL</td>
+<td>2017</td>
+<td>30034389.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4785</td>
+<td>ZAF</td>
+<td>SP.POP.TOTL</td>
+<td>2017</td>
+<td>56641209.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4786</td>
+<td>ZMB</td>
+<td>SP.POP.TOTL</td>
+<td>2017</td>
+<td>17298054.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4787</td>
+<td>ZWE</td>
+<td>SP.POP.TOTL</td>
+<td>2017</td>
+<td>14751101.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>4788 rows × 4 columns</p>
+</div>
+</div>
+</div>
+<div id="2dc6b486" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename the "country" column to "country_code" </span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>population_long.rename(columns <span class="op">=</span> {<span class="st">'country'</span>:<span class="st">'country_code'</span>},inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>population_long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country_code</th>
+<th data-quarto-table-cell-role="th">indicator</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">population</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>ABW</td>
+<td>SP.POP.TOTL</td>
+<td>2000</td>
+<td>89101.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>AFE</td>
+<td>SP.POP.TOTL</td>
+<td>2000</td>
+<td>401600588.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>AFG</td>
+<td>SP.POP.TOTL</td>
+<td>2000</td>
+<td>19542982.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>AFW</td>
+<td>SP.POP.TOTL</td>
+<td>2000</td>
+<td>269611898.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>AGO</td>
+<td>SP.POP.TOTL</td>
+<td>2000</td>
+<td>16394062.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4783</td>
+<td>XKX</td>
+<td>SP.POP.TOTL</td>
+<td>2017</td>
+<td>1791003.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4784</td>
+<td>YEM</td>
+<td>SP.POP.TOTL</td>
+<td>2017</td>
+<td>30034389.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4785</td>
+<td>ZAF</td>
+<td>SP.POP.TOTL</td>
+<td>2017</td>
+<td>56641209.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4786</td>
+<td>ZMB</td>
+<td>SP.POP.TOTL</td>
+<td>2017</td>
+<td>17298054.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4787</td>
+<td>ZWE</td>
+<td>SP.POP.TOTL</td>
+<td>2017</td>
+<td>14751101.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>4788 rows × 4 columns</p>
+</div>
+</div>
+</div>
+<div id="46f9b9d3" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop the `indicator` column.</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>population_long <span class="op">=</span> population_long.drop(columns<span class="op">=</span>[<span class="st">'indicator'</span>])</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>population_long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country_code</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">population</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>ABW</td>
+<td>2000</td>
+<td>89101.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>AFE</td>
+<td>2000</td>
+<td>401600588.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>AFG</td>
+<td>2000</td>
+<td>19542982.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>AFW</td>
+<td>2000</td>
+<td>269611898.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>AGO</td>
+<td>2000</td>
+<td>16394062.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4783</td>
+<td>XKX</td>
+<td>2017</td>
+<td>1791003.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4784</td>
+<td>YEM</td>
+<td>2017</td>
+<td>30034389.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4785</td>
+<td>ZAF</td>
+<td>2017</td>
+<td>56641209.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4786</td>
+<td>ZMB</td>
+<td>2017</td>
+<td>17298054.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4787</td>
+<td>ZWE</td>
+<td>2017</td>
+<td>14751101.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>4788 rows × 3 columns</p>
+</div>
+</div>
+</div>
+<p><strong>CHECKPOINT:</strong></p>
+<p>After performing these steps, make sure that you have a dataset named <code>population_long</code> with <strong>3 columns</strong>: <code>country_code</code>, <code>year</code>, and <code>population</code>.</p>
+</section>
+<section id="join-population-data-with-hiv-data" class="level2">
+<h2 class="anchored" data-anchor-id="join-population-data-with-hiv-data">6.2 Join Population Data with HIV Data</h2>
+<p>Use <code>pd.merge()</code> to add the population information to your HIV data combined dataset (the HIV data should be the left or primary dataset). You should use both “country_code” and “year” as keys.</p>
+<div id="a737b14b" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge population data with HIV data</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>hiv_data_combined_pop <span class="op">=</span> pd.merge(hiv_data_combined,population_long,on<span class="op">=</span>[<span class="st">'country_code'</span>, <span class="st">'year'</span>], how <span class="op">=</span> <span class="st">'left'</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>hiv_data_combined_pop</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country</th>
+<th data-quarto-table-cell-role="th">country_code</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">new_cases</th>
+<th data-quarto-table-cell-role="th">total_cases</th>
+<th data-quarto-table-cell-role="th">population</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2000</td>
+<td>NaN</td>
+<td>1900.0</td>
+<td>19542982.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2001</td>
+<td>NaN</td>
+<td>2000.0</td>
+<td>19688632.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2002</td>
+<td>NaN</td>
+<td>2200.0</td>
+<td>21000256.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2003</td>
+<td>NaN</td>
+<td>2400.0</td>
+<td>22645130.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2004</td>
+<td>NaN</td>
+<td>2700.0</td>
+<td>23553551.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1771</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2007</td>
+<td>100000.0</td>
+<td>1300000.0</td>
+<td>12450568.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1772</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2008</td>
+<td>100000.0</td>
+<td>1300000.0</td>
+<td>12550347.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1773</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2009</td>
+<td>95000.0</td>
+<td>1200000.0</td>
+<td>12679810.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1774</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2010</td>
+<td>87000.0</td>
+<td>1200000.0</td>
+<td>12839771.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1775</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2011</td>
+<td>74000.0</td>
+<td>1200000.0</td>
+<td>13025785.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>1776 rows × 6 columns</p>
+</div>
+</div>
+</div>
+<p><strong>CHECKPOINT:</strong> Verify that <code>hiv_data_combined_pop</code> now contains a <code>population</code> column.</p>
+</section>
+<section id="calculate-incidence-rate-and-prevalence-rate" class="level2">
+<h2 class="anchored" data-anchor-id="calculate-incidence-rate-and-prevalence-rate">6.3 Calculate Incidence Rate and Prevalence Rate</h2>
+<p>Lastly, calculate the incidence rate and prevalence rate per 100,000 people:</p>
+<ul>
+<li><strong>Incidence Rate</strong> = New Cases / Population * 100000</li>
+<li><strong>Prevalence Rate</strong> = Total Cases / Population * 100000</li>
+</ul>
+<div id="5e253f5f" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate incidence and prevalence rates</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>hiv_data_combined_pop[<span class="st">'incidence_rate'</span>] <span class="op">=</span> hiv_data_combined_pop[<span class="st">'new_cases'</span>] <span class="op">/</span> hiv_data_combined_pop[<span class="st">'population'</span>] <span class="op">*</span> <span class="dv">100000</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>hiv_data_combined_pop[<span class="st">'prevalence_rate'</span>] <span class="op">=</span> hiv_data_combined_pop[<span class="st">'total_cases'</span>] <span class="op">/</span> hiv_data_combined_pop[<span class="st">'population'</span>] <span class="op">*</span> <span class="dv">100000</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>hiv_data_combined_pop</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country</th>
+<th data-quarto-table-cell-role="th">country_code</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">new_cases</th>
+<th data-quarto-table-cell-role="th">total_cases</th>
+<th data-quarto-table-cell-role="th">population</th>
+<th data-quarto-table-cell-role="th">incidence_rate</th>
+<th data-quarto-table-cell-role="th">prevalence_rate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2000</td>
+<td>NaN</td>
+<td>1900.0</td>
+<td>19542982.0</td>
+<td>NaN</td>
+<td>9.722160</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2001</td>
+<td>NaN</td>
+<td>2000.0</td>
+<td>19688632.0</td>
+<td>NaN</td>
+<td>10.158146</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2002</td>
+<td>NaN</td>
+<td>2200.0</td>
+<td>21000256.0</td>
+<td>NaN</td>
+<td>10.476063</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2003</td>
+<td>NaN</td>
+<td>2400.0</td>
+<td>22645130.0</td>
+<td>NaN</td>
+<td>10.598305</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2004</td>
+<td>NaN</td>
+<td>2700.0</td>
+<td>23553551.0</td>
+<td>NaN</td>
+<td>11.463240</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1771</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2007</td>
+<td>100000.0</td>
+<td>1300000.0</td>
+<td>12450568.0</td>
+<td>803.176209</td>
+<td>10441.290711</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1772</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2008</td>
+<td>100000.0</td>
+<td>1300000.0</td>
+<td>12550347.0</td>
+<td>796.790718</td>
+<td>10358.279337</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1773</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2009</td>
+<td>95000.0</td>
+<td>1200000.0</td>
+<td>12679810.0</td>
+<td>749.222583</td>
+<td>9463.864206</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1774</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2010</td>
+<td>87000.0</td>
+<td>1200000.0</td>
+<td>12839771.0</td>
+<td>677.582178</td>
+<td>9345.961077</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1775</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2011</td>
+<td>74000.0</td>
+<td>1200000.0</td>
+<td>13025785.0</td>
+<td>568.103957</td>
+<td>9212.496598</td>
+</tr>
+</tbody>
+</table>
+
+<p>1776 rows × 8 columns</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="plot-incidence-rates" class="level1">
+<h1>7. Plot Incidence Rates</h1>
+<p>Now, you’ll select 3 countries of your choice and plot their incidence rate over time.</p>
+<ul>
+<li>Query the data to narrow down the countries.</li>
+<li>Convert the <code>year</code> column to a <code>numeric</code> type with <code>astype(int)</code>.</li>
+</ul>
+<p>Store the result as <code>hiv_data_mini</code>. Note that some countries have many years with missing data, especially for <code>new_cases</code>.</p>
+<div id="6dccc106" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Your code here</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Query rows where country is Namibia (NAM), Zimbabwe (ZWE), or South Africa (ZAF)</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>hiv_data_mini <span class="op">=</span> hiv_data_combined_pop.query(</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'country_code in ["NAM", "ZWE", "ZAF"]'</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>).copy()</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>hiv_data_mini[<span class="st">"year"</span>] <span class="op">=</span> hiv_data_mini[<span class="st">"year"</span>].astype(<span class="bu">int</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>hiv_data_mini</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country</th>
+<th data-quarto-table-cell-role="th">country_code</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">new_cases</th>
+<th data-quarto-table-cell-role="th">total_cases</th>
+<th data-quarto-table-cell-role="th">population</th>
+<th data-quarto-table-cell-role="th">incidence_rate</th>
+<th data-quarto-table-cell-role="th">prevalence_rate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1152</td>
+<td>Namibia</td>
+<td>NAM</td>
+<td>2000</td>
+<td>24000.0</td>
+<td>150000.0</td>
+<td>1819141.0</td>
+<td>1319.304001</td>
+<td>8245.650007</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1153</td>
+<td>Namibia</td>
+<td>NAM</td>
+<td>2001</td>
+<td>23000.0</td>
+<td>160000.0</td>
+<td>1856402.0</td>
+<td>1238.955787</td>
+<td>8618.822863</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1154</td>
+<td>Namibia</td>
+<td>NAM</td>
+<td>2002</td>
+<td>20000.0</td>
+<td>170000.0</td>
+<td>1888525.0</td>
+<td>1059.027548</td>
+<td>9001.734158</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1155</td>
+<td>Namibia</td>
+<td>NAM</td>
+<td>2003</td>
+<td>17000.0</td>
+<td>180000.0</td>
+<td>1915425.0</td>
+<td>887.531488</td>
+<td>9397.392224</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1156</td>
+<td>Namibia</td>
+<td>NAM</td>
+<td>2004</td>
+<td>15000.0</td>
+<td>180000.0</td>
+<td>1939406.0</td>
+<td>773.432690</td>
+<td>9281.192283</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1157</td>
+<td>Namibia</td>
+<td>NAM</td>
+<td>2005</td>
+<td>14000.0</td>
+<td>180000.0</td>
+<td>1962865.0</td>
+<td>713.243142</td>
+<td>9170.268969</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1158</td>
+<td>Namibia</td>
+<td>NAM</td>
+<td>2006</td>
+<td>12000.0</td>
+<td>180000.0</td>
+<td>1986558.0</td>
+<td>604.059886</td>
+<td>9060.898297</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1159</td>
+<td>Namibia</td>
+<td>NAM</td>
+<td>2007</td>
+<td>11000.0</td>
+<td>180000.0</td>
+<td>2011492.0</td>
+<td>546.857755</td>
+<td>8948.581451</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1160</td>
+<td>Namibia</td>
+<td>NAM</td>
+<td>2008</td>
+<td>11000.0</td>
+<td>180000.0</td>
+<td>2038552.0</td>
+<td>539.598696</td>
+<td>8829.796836</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1161</td>
+<td>Namibia</td>
+<td>NAM</td>
+<td>2009</td>
+<td>10000.0</td>
+<td>190000.0</td>
+<td>2067919.0</td>
+<td>483.577935</td>
+<td>9187.980767</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1162</td>
+<td>Namibia</td>
+<td>NAM</td>
+<td>2010</td>
+<td>10000.0</td>
+<td>190000.0</td>
+<td>2099271.0</td>
+<td>476.355840</td>
+<td>9050.760955</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1163</td>
+<td>Namibia</td>
+<td>NAM</td>
+<td>2011</td>
+<td>8800.0</td>
+<td>190000.0</td>
+<td>2132340.0</td>
+<td>412.692160</td>
+<td>8910.398904</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1464</td>
+<td>South Africa</td>
+<td>ZAF</td>
+<td>2000</td>
+<td>660000.0</td>
+<td>4000000.0</td>
+<td>46813266.0</td>
+<td>1409.856770</td>
+<td>8544.586485</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1465</td>
+<td>South Africa</td>
+<td>ZAF</td>
+<td>2001</td>
+<td>610000.0</td>
+<td>4400000.0</td>
+<td>47229714.0</td>
+<td>1291.559801</td>
+<td>9316.169054</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1466</td>
+<td>South Africa</td>
+<td>ZAF</td>
+<td>2002</td>
+<td>560000.0</td>
+<td>4700000.0</td>
+<td>47661514.0</td>
+<td>1174.952185</td>
+<td>9861.205836</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1467</td>
+<td>South Africa</td>
+<td>ZAF</td>
+<td>2003</td>
+<td>520000.0</td>
+<td>4900000.0</td>
+<td>48104048.0</td>
+<td>1080.990107</td>
+<td>10186.252932</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1468</td>
+<td>South Africa</td>
+<td>ZAF</td>
+<td>2004</td>
+<td>500000.0</td>
+<td>5000000.0</td>
+<td>48556071.0</td>
+<td>1029.737353</td>
+<td>10297.373525</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1469</td>
+<td>South Africa</td>
+<td>ZAF</td>
+<td>2005</td>
+<td>480000.0</td>
+<td>5200000.0</td>
+<td>49017147.0</td>
+<td>979.249159</td>
+<td>10608.532561</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1470</td>
+<td>South Africa</td>
+<td>ZAF</td>
+<td>2006</td>
+<td>470000.0</td>
+<td>5200000.0</td>
+<td>49491756.0</td>
+<td>949.653110</td>
+<td>10506.800365</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1471</td>
+<td>South Africa</td>
+<td>ZAF</td>
+<td>2007</td>
+<td>460000.0</td>
+<td>5300000.0</td>
+<td>49996094.0</td>
+<td>920.071876</td>
+<td>10600.828137</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1472</td>
+<td>South Africa</td>
+<td>ZAF</td>
+<td>2008</td>
+<td>450000.0</td>
+<td>5400000.0</td>
+<td>50565812.0</td>
+<td>889.929346</td>
+<td>10679.152151</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1473</td>
+<td>South Africa</td>
+<td>ZAF</td>
+<td>2009</td>
+<td>430000.0</td>
+<td>5400000.0</td>
+<td>51170779.0</td>
+<td>840.323342</td>
+<td>10552.897778</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1474</td>
+<td>South Africa</td>
+<td>ZAF</td>
+<td>2010</td>
+<td>390000.0</td>
+<td>5500000.0</td>
+<td>51784921.0</td>
+<td>753.114985</td>
+<td>10620.852352</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1475</td>
+<td>South Africa</td>
+<td>ZAF</td>
+<td>2011</td>
+<td>380000.0</td>
+<td>5600000.0</td>
+<td>52443325.0</td>
+<td>724.591738</td>
+<td>10678.194031</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1764</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2000</td>
+<td>160000.0</td>
+<td>1900000.0</td>
+<td>11834676.0</td>
+<td>1351.959276</td>
+<td>16054.516406</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1765</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2001</td>
+<td>140000.0</td>
+<td>1800000.0</td>
+<td>11910978.0</td>
+<td>1175.386270</td>
+<td>15112.109182</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1766</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2002</td>
+<td>130000.0</td>
+<td>1700000.0</td>
+<td>11984644.0</td>
+<td>1084.721415</td>
+<td>14184.818506</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1767</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2003</td>
+<td>110000.0</td>
+<td>1700000.0</td>
+<td>12075828.0</td>
+<td>910.910622</td>
+<td>14077.709620</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1768</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2004</td>
+<td>110000.0</td>
+<td>1600000.0</td>
+<td>12160881.0</td>
+<td>904.539729</td>
+<td>13156.941508</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1769</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2005</td>
+<td>110000.0</td>
+<td>1500000.0</td>
+<td>12224753.0</td>
+<td>899.813681</td>
+<td>12270.186563</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1770</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2006</td>
+<td>100000.0</td>
+<td>1400000.0</td>
+<td>12330490.0</td>
+<td>810.997779</td>
+<td>11353.968901</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1771</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2007</td>
+<td>100000.0</td>
+<td>1300000.0</td>
+<td>12450568.0</td>
+<td>803.176209</td>
+<td>10441.290711</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1772</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2008</td>
+<td>100000.0</td>
+<td>1300000.0</td>
+<td>12550347.0</td>
+<td>796.790718</td>
+<td>10358.279337</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1773</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2009</td>
+<td>95000.0</td>
+<td>1200000.0</td>
+<td>12679810.0</td>
+<td>749.222583</td>
+<td>9463.864206</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1774</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2010</td>
+<td>87000.0</td>
+<td>1200000.0</td>
+<td>12839771.0</td>
+<td>677.582178</td>
+<td>9345.961077</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1775</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2011</td>
+<td>74000.0</td>
+<td>1200000.0</td>
+<td>13025785.0</td>
+<td>568.103957</td>
+<td>9212.496598</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Now plot incidence rates over time using a line graph.</p>
+<div id="bd8de63f" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># line graph plot of incidence rates over time</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>fig_incid_rate <span class="op">=</span> px.line(</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    hiv_data_mini,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"year"</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"incidence_rate"</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"country_code"</span>,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"HIV Incidence Rates over time in Namibia, South Africa and Zimbabwe"</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>fig_incid_rate.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+        <script type="text/javascript">
+        window.PlotlyConfig = {MathJaxConfig: 'local'};
+        if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}
+        </script>
+        <script type="module">import "https://cdn.plot.ly/plotly-3.1.0.min"</script>
+        
+</div>
+<div class="cell-output cell-output-display">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.1.0.min.js" integrity="sha256-Ei4740bWZhaUTQuD6q9yQlgVCMPBz6CZWhevDYPv93A=" crossorigin="anonymous"></script>                <div id="4d251abe-663f-4975-aafd-bfefa6eaf8bf" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("4d251abe-663f-4975-aafd-bfefa6eaf8bf")) {                    Plotly.newPlot(                        "4d251abe-663f-4975-aafd-bfefa6eaf8bf",                        [{"hovertemplate":"country_code=NAM\u003cbr\u003eyear=%{x}\u003cbr\u003eincidence_rate=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"NAM","line":{"color":"#636efa","dash":"solid"},"marker":{"symbol":"circle"},"mode":"lines","name":"NAM","orientation":"v","showlegend":true,"x":{"dtype":"i2","bdata":"0AfRB9IH0wfUB9UH1gfXB9gH2QfaB9sH"},"xaxis":"x","y":{"dtype":"f8","bdata":"NHQVTDedlEDdUbO50luTQJPnhzUcjJBATZ+rfEC8i0CFpUkmdiuIQKEqdPTxSYZAwpXFpXrggkCOn9Su3BaBQFHF4yDK3IBAfXnjOD85fkC24fyEscV9QIcFJBYTy3lA"},"yaxis":"y","type":"scatter"},{"hovertemplate":"country_code=ZAF\u003cbr\u003eyear=%{x}\u003cbr\u003eincidence_rate=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"ZAF","line":{"color":"#EF553B","dash":"solid"},"marker":{"symbol":"circle"},"mode":"lines","name":"ZAF","orientation":"v","showlegend":true,"x":{"dtype":"i2","bdata":"0AfRB9IH0wfUB9UH1gfXB9gH2QfaB9sH"},"xaxis":"x","y":{"dtype":"f8","bdata":"dEUjVW0HlkCkrmM8PS6UQFr1gAnPW5JAvnej3vXjkEBMjYkM8xaQQIa0U0f+mY5AFGyvkTmtjUDDbLszk8CMQAFe7Exvz4tASNcaNJZCikCN5zt964iHQO\u002fRDOG7pIZA"},"yaxis":"y","type":"scatter"},{"hovertemplate":"country_code=ZWE\u003cbr\u003eyear=%{x}\u003cbr\u003eincidence_rate=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"ZWE","line":{"color":"#00cc96","dash":"solid"},"marker":{"symbol":"circle"},"mode":"lines","name":"ZWE","orientation":"v","showlegend":true,"x":{"dtype":"i2","bdata":"0AfRB9IH0wfUB9UH1gfXB9gH2QfaB9sH"},"xaxis":"x","y":{"dtype":"f8","bdata":"wZeFTNYflUDCVUmKi12SQDmYqLri8pBA2Wxr9Eh3jEDPaEJdUUSMQNhaWGuCHoxAyBVjc\u002ftXiUCmegHgaBmJQOSLEmRT5ohAyPiW2cdph0AgzfhMqCyFQF6SWOfUwIFA"},"yaxis":"y","type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"year"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"incidence_rate"}},"legend":{"title":{"text":"country_code"},"tracegroupgap":0},"title":{"text":"HIV Incidence Rates over time in Namibia, South Africa and Zimbabwe"}},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('4d251abe-663f-4975-aafd-bfefa6eaf8bf');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+</section>
+<section id="plot-prevalence-rates" class="level1">
+<h1>8. Plot Prevalence Rates</h1>
+<p>Plot their prevalence rates over time, using a line graph.</p>
+<div id="5f5a1c13" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># line graph plot of prevalence rate over time</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>fig_prev_rate <span class="op">=</span> px.line(</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    hiv_data_mini,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"year"</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"prevalence_rate"</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"country_code"</span>,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"HIV Prevalence Rates over time in Namibia, South Africa and Zimbabwe"</span>,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>fig_prev_rate.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.1.0.min.js" integrity="sha256-Ei4740bWZhaUTQuD6q9yQlgVCMPBz6CZWhevDYPv93A=" crossorigin="anonymous"></script>                <div id="63ff8fd8-67f2-4e5c-aa13-5afd5bb66636" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("63ff8fd8-67f2-4e5c-aa13-5afd5bb66636")) {                    Plotly.newPlot(                        "63ff8fd8-67f2-4e5c-aa13-5afd5bb66636",                        [{"hovertemplate":"country_code=NAM\u003cbr\u003eyear=%{x}\u003cbr\u003eprevalence_rate=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"NAM","line":{"color":"#636efa","dash":"solid"},"marker":{"symbol":"circle"},"mode":"lines","name":"NAM","orientation":"v","showlegend":true,"x":{"dtype":"i2","bdata":"0AfRB9IH0wfUB9UH1gfXB9gH2QfaB9sH"},"xaxis":"x","y":{"dtype":"f8","bdata":"ycJwM9MawEDAzJBTadXAQAxm4PjdlMFAxoNiNLJawkAkPLecmCDCQIs0lG0i6cFAZjxp+3KywUBdXfxsSnrBQORmuv7lPsFAIxDHif3xwUAEJvZmYa3BQC9lTQ8zZ8FA"},"yaxis":"y","type":"scatter"},{"hovertemplate":"country_code=ZAF\u003cbr\u003eyear=%{x}\u003cbr\u003eprevalence_rate=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"ZAF","line":{"color":"#EF553B","dash":"solid"},"marker":{"symbol":"circle"},"mode":"lines","name":"ZAF","orientation":"v","showlegend":true,"x":{"dtype":"i2","bdata":"0AfRB9IH0wfUB9UH1gfXB9gH2QfaB9sH"},"xaxis":"x","y":{"dtype":"f8","bdata":"zO7zEUuwwEBMb5CjFTLCQNTc01iaQsNAMrMWYCDlw0Ce8KvPrxzEQDoC9ipEuMRAWlhbcmaFxEDCGGIAarTEQIBGsXmT28RAXnZi6nKcxECHpd4Zbb7EQDQSBdYY28RA"},"yaxis":"y","type":"scatter"},{"hovertemplate":"country_code=ZWE\u003cbr\u003eyear=%{x}\u003cbr\u003eprevalence_rate=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"ZWE","line":{"color":"#00cc96","dash":"solid"},"marker":{"symbol":"circle"},"mode":"lines","name":"ZWE","orientation":"v","showlegend":true,"x":{"dtype":"i2","bdata":"0AfRB9IH0wfUB9UH1gfXB9gH2QfaB9sH"},"xaxis":"x","y":{"dtype":"f8","bdata":"Qk2WGUJbz0CKt6z5DYTNQA6qzsRotMtAgX3Q1Np+y0AYpVODeLLJQCg2TuEX98dAD7P2BPwsxkCnMwE2pWTEQKkRT8EjO8RAaMROnu57wkD53I8E+0DCQNy9hpA\u002f\u002fsFA"},"yaxis":"y","type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"year"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"prevalence_rate"}},"legend":{"title":{"text":"country_code"},"tracegroupgap":0},"title":{"text":"HIV Prevalence Rates over time in Namibia, South Africa and Zimbabwe"}},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('63ff8fd8-67f2-4e5c-aa13-5afd5bb66636');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+</section>
+<section id="optional-challenge" class="level1">
+<h1>9. Optional Challenge</h1>
+<p>For this challenge, you should:</p>
+<ol type="1">
+<li><strong>Add Regional Information:</strong> Use the <code>country_converter</code> package to get regional (continent) information for each country.</li>
+<li><strong>Identify Highest Prevalence Rates per Continent:</strong> Find the countries with the highest prevalence rate in 2011 for each continent.</li>
+<li><strong>Create a Bar Chart:</strong> Make a bar chart comparing the 2011 prevalence rates of these countries.</li>
+</ol>
+<div id="507d4794" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>hiv_data_combined_pop[<span class="st">'continent'</span>] <span class="op">=</span> coco.convert(names<span class="op">=</span>hiv_data_combined_pop[<span class="st">'country_code'</span>], to<span class="op">=</span><span class="st">'continent'</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>hiv_data_combined_pop</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country</th>
+<th data-quarto-table-cell-role="th">country_code</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">new_cases</th>
+<th data-quarto-table-cell-role="th">total_cases</th>
+<th data-quarto-table-cell-role="th">population</th>
+<th data-quarto-table-cell-role="th">incidence_rate</th>
+<th data-quarto-table-cell-role="th">prevalence_rate</th>
+<th data-quarto-table-cell-role="th">continent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2000</td>
+<td>NaN</td>
+<td>1900.0</td>
+<td>19542982.0</td>
+<td>NaN</td>
+<td>9.722160</td>
+<td>Asia</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2001</td>
+<td>NaN</td>
+<td>2000.0</td>
+<td>19688632.0</td>
+<td>NaN</td>
+<td>10.158146</td>
+<td>Asia</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2002</td>
+<td>NaN</td>
+<td>2200.0</td>
+<td>21000256.0</td>
+<td>NaN</td>
+<td>10.476063</td>
+<td>Asia</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2003</td>
+<td>NaN</td>
+<td>2400.0</td>
+<td>22645130.0</td>
+<td>NaN</td>
+<td>10.598305</td>
+<td>Asia</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2004</td>
+<td>NaN</td>
+<td>2700.0</td>
+<td>23553551.0</td>
+<td>NaN</td>
+<td>11.463240</td>
+<td>Asia</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1771</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2007</td>
+<td>100000.0</td>
+<td>1300000.0</td>
+<td>12450568.0</td>
+<td>803.176209</td>
+<td>10441.290711</td>
+<td>Africa</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1772</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2008</td>
+<td>100000.0</td>
+<td>1300000.0</td>
+<td>12550347.0</td>
+<td>796.790718</td>
+<td>10358.279337</td>
+<td>Africa</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1773</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2009</td>
+<td>95000.0</td>
+<td>1200000.0</td>
+<td>12679810.0</td>
+<td>749.222583</td>
+<td>9463.864206</td>
+<td>Africa</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1774</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2010</td>
+<td>87000.0</td>
+<td>1200000.0</td>
+<td>12839771.0</td>
+<td>677.582178</td>
+<td>9345.961077</td>
+<td>Africa</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1775</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2011</td>
+<td>74000.0</td>
+<td>1200000.0</td>
+<td>13025785.0</td>
+<td>568.103957</td>
+<td>9212.496598</td>
+<td>Africa</td>
+</tr>
+</tbody>
+</table>
+
+<p>1776 rows × 9 columns</p>
+</div>
+</div>
+</div>
+<ol start="2" type="1">
+<li><strong>Identify Highest Prevalence Rates per Continent:</strong> Find the countries with the highest prevalence rate in 2011 for each continent.</li>
+</ol>
+<div id="e3619ab1" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># filtering out the 2011 data</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>hiv_data_combined_pop_2011 <span class="op">=</span> hiv_data_combined_pop[</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    hiv_data_combined_pop[<span class="st">'year'</span>] <span class="op">==</span> <span class="st">'2011'</span>]</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>hiv_data_combined_pop_2011</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="19">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country</th>
+<th data-quarto-table-cell-role="th">country_code</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">new_cases</th>
+<th data-quarto-table-cell-role="th">total_cases</th>
+<th data-quarto-table-cell-role="th">population</th>
+<th data-quarto-table-cell-role="th">incidence_rate</th>
+<th data-quarto-table-cell-role="th">prevalence_rate</th>
+<th data-quarto-table-cell-role="th">continent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">11</td>
+<td>Afghanistan</td>
+<td>AFG</td>
+<td>2011</td>
+<td>1100.0</td>
+<td>5800.0</td>
+<td>29249157.0</td>
+<td>3.760792</td>
+<td>19.829631</td>
+<td>Asia</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">23</td>
+<td>Angola</td>
+<td>AGO</td>
+<td>2011</td>
+<td>23000.0</td>
+<td>230000.0</td>
+<td>24259111.0</td>
+<td>94.809740</td>
+<td>948.097397</td>
+<td>Africa</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">35</td>
+<td>Argentina</td>
+<td>ARG</td>
+<td>2011</td>
+<td>5600.0</td>
+<td>95000.0</td>
+<td>41261490.0</td>
+<td>13.571977</td>
+<td>230.238898</td>
+<td>America</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">47</td>
+<td>Armenia</td>
+<td>ARM</td>
+<td>2011</td>
+<td>350.0</td>
+<td>3600.0</td>
+<td>2928976.0</td>
+<td>11.949569</td>
+<td>122.909850</td>
+<td>Asia</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">59</td>
+<td>Australia</td>
+<td>AUS</td>
+<td>2011</td>
+<td>1100.0</td>
+<td>22000.0</td>
+<td>22340024.0</td>
+<td>4.923898</td>
+<td>98.477960</td>
+<td>Oceania</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1727</td>
+<td>Venezuela</td>
+<td>VEN</td>
+<td>2011</td>
+<td>7300.0</td>
+<td>99000.0</td>
+<td>29096159.0</td>
+<td>25.089222</td>
+<td>340.251096</td>
+<td>America</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1739</td>
+<td>Vietnam</td>
+<td>VNM</td>
+<td>2011</td>
+<td>21000.0</td>
+<td>250000.0</td>
+<td>88349117.0</td>
+<td>23.769338</td>
+<td>282.968306</td>
+<td>Asia</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1751</td>
+<td>Yemen</td>
+<td>YEM</td>
+<td>2011</td>
+<td>2600.0</td>
+<td>22000.0</td>
+<td>25475610.0</td>
+<td>10.205840</td>
+<td>86.357108</td>
+<td>Asia</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1763</td>
+<td>Zambia</td>
+<td>ZMB</td>
+<td>2011</td>
+<td>NaN</td>
+<td>970000.0</td>
+<td>14265814.0</td>
+<td>NaN</td>
+<td>6799.471800</td>
+<td>Africa</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1775</td>
+<td>Zimbabwe</td>
+<td>ZWE</td>
+<td>2011</td>
+<td>74000.0</td>
+<td>1200000.0</td>
+<td>13025785.0</td>
+<td>568.103957</td>
+<td>9212.496598</td>
+<td>Africa</td>
+</tr>
+</tbody>
+</table>
+
+<p>148 rows × 9 columns</p>
+</div>
+</div>
+</div>
+<div id="66d569f3" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># finding maximum prevalence in each continent</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>max_prev_rate <span class="op">=</span> hiv_data_combined_pop_2011.groupby(<span class="st">"continent"</span>)[<span class="st">"prevalence_rate"</span>].transform(<span class="st">"max"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="76416048" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only rows matching the max, using .query()</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>highest_prevalence_2011 <span class="op">=</span> hiv_data_combined_pop_2011.query(</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"prevalence_rate == @max_prev_rate"</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>highest_prevalence_2011</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country</th>
+<th data-quarto-table-cell-role="th">country_code</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">new_cases</th>
+<th data-quarto-table-cell-role="th">total_cases</th>
+<th data-quarto-table-cell-role="th">population</th>
+<th data-quarto-table-cell-role="th">incidence_rate</th>
+<th data-quarto-table-cell-role="th">prevalence_rate</th>
+<th data-quarto-table-cell-role="th">continent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">95</td>
+<td>Bahamas</td>
+<td>BHS</td>
+<td>2011</td>
+<td>350.0</td>
+<td>6500.0</td>
+<td>377950.0</td>
+<td>92.604842</td>
+<td>1719.804207</td>
+<td>America</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">539</td>
+<td>Estonia</td>
+<td>EST</td>
+<td>2011</td>
+<td>750.0</td>
+<td>9900.0</td>
+<td>1327439.0</td>
+<td>56.499771</td>
+<td>745.796982</td>
+<td>Europe</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">551</td>
+<td>Eswatini</td>
+<td>SWZ</td>
+<td>2011</td>
+<td>13000.0</td>
+<td>190000.0</td>
+<td>1105371.0</td>
+<td>1176.075725</td>
+<td>17188.799055</td>
+<td>Africa</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1283</td>
+<td>Papua New Guinea</td>
+<td>PNG</td>
+<td>2011</td>
+<td>1700.0</td>
+<td>28000.0</td>
+<td>7806637.0</td>
+<td>21.776342</td>
+<td>358.669168</td>
+<td>Oceania</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1607</td>
+<td>Thailand</td>
+<td>THA</td>
+<td>2011</td>
+<td>9700.0</td>
+<td>490000.0</td>
+<td>68712846.0</td>
+<td>14.116720</td>
+<td>713.112654</td>
+<td>Asia</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<ol start="3" type="1">
+<li><strong>Create a Bar Chart:</strong> Make a bar chart comparing the 2011 prevalence rates of these countries.</li>
+</ol>
+<div id="22df488e" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>px.bar(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    highest_prevalence_2011,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"continent"</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"prevalence_rate"</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"continent"</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"2011 maximum prevalence rate per continent"</span>,</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.1.0.min.js" integrity="sha256-Ei4740bWZhaUTQuD6q9yQlgVCMPBz6CZWhevDYPv93A=" crossorigin="anonymous"></script>                <div id="db69ed03-08b4-44a5-805d-2993e44b471f" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("db69ed03-08b4-44a5-805d-2993e44b471f")) {                    Plotly.newPlot(                        "db69ed03-08b4-44a5-805d-2993e44b471f",                        [{"hovertemplate":"continent=%{x}\u003cbr\u003eprevalence_rate=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"America","marker":{"color":"#636efa","pattern":{"shape":""}},"name":"America","orientation":"v","showlegend":true,"textposition":"auto","x":["America"],"xaxis":"x","y":{"dtype":"f8","bdata":"X9wDgjffmkA="},"yaxis":"y","type":"bar"},{"hovertemplate":"continent=%{x}\u003cbr\u003eprevalence_rate=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"Europe","marker":{"color":"#EF553B","pattern":{"shape":""}},"name":"Europe","orientation":"v","showlegend":true,"textposition":"auto","x":["Europe"],"xaxis":"x","y":{"dtype":"f8","bdata":"MmYaOGBOh0A="},"yaxis":"y","type":"bar"},{"hovertemplate":"continent=%{x}\u003cbr\u003eprevalence_rate=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"Africa","marker":{"color":"#00cc96","pattern":{"shape":""}},"name":"Africa","orientation":"v","showlegend":true,"textposition":"auto","x":["Africa"],"xaxis":"x","y":{"dtype":"f8","bdata":"Mbu2IzPJ0EA="},"yaxis":"y","type":"bar"},{"hovertemplate":"continent=%{x}\u003cbr\u003eprevalence_rate=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"Oceania","marker":{"color":"#ab63fa","pattern":{"shape":""}},"name":"Oceania","orientation":"v","showlegend":true,"textposition":"auto","x":["Oceania"],"xaxis":"x","y":{"dtype":"f8","bdata":"O2jR6bRqdkA="},"yaxis":"y","type":"bar"},{"hovertemplate":"continent=%{x}\u003cbr\u003eprevalence_rate=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"Asia","marker":{"color":"#FFA15A","pattern":{"shape":""}},"name":"Asia","orientation":"v","showlegend":true,"textposition":"auto","x":["Asia"],"xaxis":"x","y":{"dtype":"f8","bdata":"rdpUt+ZIhkA="},"yaxis":"y","type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"continent"},"categoryorder":"array","categoryarray":["America","Europe","Africa","Oceania","Asia"]},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"prevalence_rate"}},"legend":{"title":{"text":"continent"},"tracegroupgap":0},"title":{"text":"2011 maximum prevalence rate per continent"},"barmode":"relative"},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('db69ed03-08b4-44a5-805d-2993e44b471f');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+<p><strong>Africa had the highest prevalence rate i.e.&nbsp;highest percentage of a population with HIV in 2011 compared to other continents.</strong></p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

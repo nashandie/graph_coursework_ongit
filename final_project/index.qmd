@@ -1,0 +1,850 @@
+---
+title: "SADC Inflation Rate & Interest Rate Analysis with Quarto"
+author: "Elise Openi Gustav"
+format: dashboard
+theme: minty
+execute:
+    echo: false
+---
+
+```{python}
+
+# Importing libraries
+
+import pandas as pd
+import numpy as np
+import plotly.express as px
+from itables import show
+import country_converter as coco
+
+```
+
+```{python}
+## This analysis will focus on SADC countries.SADC stands for Southern African Development Community) is a Regional Economic Community comprising 16 member states in Southern Africa, aiming to promote economic growth and development through deeper integration and cooperation.
+
+# Loading the datasets of interest (inflation rate, interest rate & population) into Python using `pd.read_csv()` then explore them to understand their structure.
+
+# Inflation rate dataset
+inflation_rate_raw = pd.read_csv("data/inflation_annual_percent.csv")
+
+# Interest rate dataset
+interest_rate_raw = pd.read_csv("data/fr_inr_lend.csv")
+
+#Population dataset
+population_raw = pd.read_csv("data/pop.csv")
+
+```
+
+
+```{python}
+# adding country codes "ISO3"  to the datasets
+# initially, the below code generated a warning tha "UAE" not found in ISO3 and Channel Islands not found in regex. Although the two countries are not essential for this analysis, instead of dropping them, I manually fixed names before converting again
+
+# Manually fixing problematic names "UAE" and "Channel Islands" before converting
+
+inflation_rate_raw["country"] = inflation_rate_raw["country"].replace({
+    "UAE": "United Arab Emirates",
+    "Channel Islands": "Jersey" 
+})
+
+interest_rate_raw["country"] = interest_rate_raw["country"].replace({
+    "UAE": "United Arab Emirates",
+    "Channel Islands": "Jersey"  
+})
+
+population_raw["country"] = population_raw["country"].replace({
+    "UAE": "United Arab Emirates",
+    "Channel Islands": "Jersey"  
+})
+
+# adding country codes "ISO3" to the inflation rate dataset
+inflation_rate_raw["country_code"] = coco.convert(
+    names=inflation_rate_raw["country"], to="ISO3", not_found=None
+)
+
+# adding country codes "ISO3" to the interest rate dataset
+interest_rate_raw["country_code"] = coco.convert(
+    names=interest_rate_raw["country"], to="ISO3", not_found=None
+)
+
+## adding country codes "ISO3" to the population dataset
+population_raw["country_code"] = coco.convert(
+    names=population_raw["country"], to="ISO3", not_found=None
+)
+```
+
+```{python}
+
+# Reshape inflation_rate_raw to long format
+inflation_rate_long = inflation_rate_raw.melt(
+    id_vars=["country", "country_code"], var_name="year", value_name="inflation_rate"
+).sort_values(by=["country", "country_code"])
+
+
+# Reshape interest_rate_raw to long format
+interest_rate_long = interest_rate_raw.melt(
+    id_vars=["country", "country_code"], var_name="year", value_name="interest_rate"
+).sort_values(by=["country", "country_code"])
+
+# Reshape population_raw to long format
+population_long = population_raw.melt(
+    id_vars=["country", "country_code"], var_name="year", value_name="population"
+).sort_values(by=["country", "country_code"])
+
+
+# Mapping each country to a continent in inflation_rate_long, interest_rate_long & population_long datasets, in case analysis would be required that would involve continents
+
+inflation_rate_long["continent"] = coco.convert(
+    names=inflation_rate_long["country_code"],
+    to="continent",
+    src="ISO3",
+    not_found=None,
+)
+
+interest_rate_long["continent"] = coco.convert(
+    names=interest_rate_long["country_code"],
+    to="continent",
+    src="ISO3",
+    not_found=None,
+)
+
+population_long["continent"] = coco.convert(
+    names=population_long["country_code"],
+    to="continent",
+    src="ISO3",
+    not_found=None,
+)
+
+# Merging the three data sets ('inflation_rate_long, 'interest_rate_long', 'population_long') into 'merged_data' dataset
+
+# First merge two(2) datasets, since the function 'pd.merge' only merges two datasets at a time.
+merged_data_2 = pd.merge(
+    inflation_rate_long,
+    interest_rate_long,
+    on=["year", "country_code", "country", "continent"],
+)
+
+# Merging all datasets
+merged_data = pd.merge(
+    merged_data_2,
+    population_long,
+    on=["year", "country_code","country", "continent"],
+)
+
+merged_data["year"] = merged_data["year"].astype(int)
+
+```
+
+```{python}
+# Filter out information for SADC countries only 
+# SADC countries are: Angola (AGO), Botswana (BWA), Comoros (COM), Democratic Republic of Congo (COD), Eswatini (SWZ), Lesotho (LSO), Madagascar (MDG), Malawi (MWI), Mauritius (MUS), Mozambique (MOZ), Namibia (NAM), Seychelles (SYC), South Africa (ZAF), United Republic of Tanzania (TZA), Zambia (ZMB), and Zimbabwe (ZWE)
+
+sadc_countries = [
+    "AGO",
+    "BWA",
+    "COM",
+    "COD",
+    "SWZ",
+    "LSO",
+    "MDG",
+    "MWI",
+    "MUS",
+    "MOZ",
+    "NAM",
+    "SYC",
+    "ZAF",
+    "TZA",
+    "ZMB",
+    "ZWE",
+]
+
+# Filter information for only SADC countries AND years 2013–2022 and store it in "merged_data_SADC"
+
+merged_data_SADC = merged_data[
+    (merged_data["country_code"].isin(sadc_countries))
+    & (merged_data["year"].between(2013, 2022))
+].copy()
+
+```
+
+
+```{python}
+# 'Merged_data_SADC' has 160 rows and 7 columns: country->country_code->year->inflation_rate->continent->interest_rate->population
+
+# cleaning the data
+# converting the 'inflation_rate' to float type
+
+merged_data_SADC["inflation_rate"] = (
+    merged_data_SADC["inflation_rate"]
+    .astype(str)  # make sure it's string
+    .str.replace("−", "-", regex=False)  # replace unicode minus
+    .astype(float)  # convert to float
+)
+
+# converting the 'interest_rate' to float type
+merged_data_SADC["interest_rate"] = (
+    merged_data_SADC["interest_rate"]
+    .astype(str)  # make sure it's string
+    .str.replace("−", "-", regex=False)  # replace unicode minus
+    .astype(float)  # convert to float
+)
+
+# Cleaning the population column, merged_data_SADC['population'] contains values like "2.5M", "850k". Removing the 'M'and 'k' in front of population figures. 
+# 'M' → multiplies by 1,000,000 (millions), "e6".
+# 'k' → multiplies by 1,000 (thousands), "e3".
+
+merged_data_SADC["population"] = (
+    merged_data_SADC["population"]
+    .astype(str)       # Ensure all values are strings
+    .str.replace(",", "", regex=False) # Remove commas
+    .str.strip()         # Remove extra spaces
+    .str.replace("M", "e6", regex=False) # Replace 'M' with scientific notation
+    .str.replace("k", "e3", regex=False) # Replace 'k' with scientific notation
+    .apply(pd.to_numeric, errors="coerce") #Convert to numeric, invalid -> NaN
+)
+```
+
+```{python}
+# The code below finds SADC maximum & minimum inflation and interest rates , and Namibia average inflation and interest rates for value boxes display.
+
+# querying rows with maximum inflation and this should return all rows where the inflation rate equals the maximum , so if more than one country shares the same value, they’ll all be included.
+rows_max_infl = merged_data_SADC.query("inflation_rate == inflation_rate.max()")
+
+
+# since the "rows-max-infl" inflation rate column should have the same value, code below extracts the figure in first row.
+max_rate_infl_str = f"{rows_max_infl['inflation_rate'].iloc[0]:.1f}%"
+
+# create a list of 'Country + year' only for all countries with same max inflation rate
+
+max_records = []  # initializes an empty list to store formatted string "Country (Year)"
+
+for (
+    i
+) in (
+    rows_max_infl.index
+):  # Loops through each row index in the DataFrame rows_max_infl.
+    country = rows_max_infl.at[
+        i, "country"
+    ]  # retrives the value from the "country" column at current row i
+    year = rows_max_infl.at[
+        i, "year"
+    ]  #  # retrives the value from the "year" column at current row i
+    max_records.append(
+        f"{country} ({year})"
+    )  # creates a formatted string like Namibia(2020)
+
+max_country_year_infl = "; ".join(
+    max_records
+)  # joins all strings in max_records into one separated by ";". for multiple countries sharing the same max inflation rate, it would print e.g. Namibia (2020);Zimbabwe (2013) on the bottom row of the value box
+
+
+# querying rows with minimum inflation and this should return all rows where the inflation rate equals the minimum , so if more than one country shares the same value, they’ll all be included.
+
+rows_min_infl = merged_data_SADC[
+    merged_data_SADC["inflation_rate"] == merged_data_SADC["inflation_rate"].min()
+]
+
+# since the "rows-min-infl" inflation rate column should have the same value, code below extracts the figure in first row
+min_rate_infl_str = f"{rows_min_infl['inflation_rate'].iloc[0]:.1f}%"
+
+# create a list of 'Country + year' only for all countries with same max inflation rate
+min_records = []
+for i in rows_min_infl.index:
+    country = rows_min_infl.at[i, "country"]
+    year = rows_min_infl.at[i, "year"]
+    min_records.append(f"{country} ({year})")
+
+min_country_year_infl = "; ".join(min_records) # joins all strings in min_records into one separated by ";". for multiple countries sharing the same min inflation rate, it would print e.g. Namibia (2020);Zimbabwe (2013) on the bottom row of the value box
+
+# querying rows with maximum interest and this should return all rows where the interest rate equals the maximum , so if more than one country shares the same value, they’ll all be included.
+
+rows_max_int = merged_data_SADC.query("interest_rate == interest_rate.max()")
+
+
+# since the "rows-max-int" inflation rate column should have the same value, code below extracts the figure in first row.
+
+max_rate_int_str = f"{rows_max_int['interest_rate'].iloc[0]:.1f}%"
+
+# create a list of 'Country + year' only for all countries with same max interest rate
+
+max_records_int = []
+for i in rows_max_int.index:
+    country = rows_max_int.at[i, "country"]
+    year = rows_max_int.at[i, "year"]
+    max_records_int.append(f"{country} ({year})")
+
+max_country_year_int = "; ".join(max_records_int)
+
+
+# querying rows with minimum interest and this should return all rows where the interest rate equals the minimum , so if more than one country shares the same value, they’ll all be included.
+
+rows_min_int = merged_data_SADC[
+    merged_data_SADC["interest_rate"] == merged_data_SADC["interest_rate"].min()
+]
+
+# since the "rows-min-int" interest rate column should have the same value, code below extracts the figure in first row
+
+min_rate_int_str = f"{rows_min_int['interest_rate'].iloc[0]:.1f}%"
+
+# create a list of 'Country + year' only for all countries with same max inflation rate
+
+min_records_int = []
+for i in rows_min_int.index:
+    country = rows_min_int.at[i, "country"]
+    year = rows_min_int.at[i, "year"]
+    min_records_int.append(f"{country} ({year})")
+
+min_country_year_int = "; ".join(min_records_int)
+
+
+# Calculate average interest rate per country (2013–2022)
+sadc_avg_interest = (
+    merged_data_SADC.groupby(["country", "country_code"], as_index=False)[
+        "interest_rate"
+    ]
+    .mean()
+    .sort_values(
+        by="interest_rate", ascending=True
+    )  # ascending so lowest at bottom, highest at top
+)
+
+# filtering the Namibian average interest rate
+nam_avg_interest = sadc_avg_interest[sadc_avg_interest["country"] == "Namibia"][
+    "interest_rate"
+].iloc[0]
+
+# formating the average interest
+nam_avg_interest = f"{nam_avg_interest:.1f}%"
+
+
+# Calculate average inflation per country (2013–2022) using .groupby function. needed for plotting a bar chart
+sadc_avg_inflation = (
+    merged_data_SADC.groupby(["country", "country_code"], as_index=False)[
+        "inflation_rate"
+    ]
+    .mean()
+    .sort_values(
+        by="inflation_rate", ascending=True
+    )  # ascending so lowest at bottom, highest at top
+)
+
+# filtering the Namibian average inflation rate
+nam_avg_inflation = sadc_avg_inflation[sadc_avg_inflation["country"] == "Namibia"][
+    "inflation_rate"
+].iloc[0]
+
+# Formating the average inflation
+nam_avg_inflation = f"{nam_avg_inflation:.1f}%"
+
+
+```
+
+
+```{python}
+# Visualisations
+# plot the inflation rate choropleth for SADC countries only
+
+
+figInfl = px.choropleth(
+    merged_data_SADC,
+    locations="country_code",
+    color="inflation_rate",
+    hover_name="country",
+    animation_frame="year",
+    labels={"inflation_rate": "Inflation Rate (%)"},
+    title="SADC Inflation Rate (2013-2022)",
+    color_continuous_scale="greens",
+    range_color=[
+        merged_data_SADC["inflation_rate"].min(),
+        merged_data_SADC["inflation_rate"].max(),
+    ],
+    projection="mercator",
+)
+
+figInfl.update_geos(
+    fitbounds="locations", visible=False
+)  # ensures the choropleth is focused on SADC countries, hide the base map and the frame around the map.
+
+
+# The legend title was overlapping with the scale values, so the code below is to address that.
+
+figInfl.update_coloraxes(
+    colorbar=dict(
+        title="Inflation Rate (%)",
+        title_side="right",  # Moves title beside the scale
+        title_font=dict(size=12),  # Adjusts title font size
+        tickfont=dict(size=10),  # Adjusts tick label size
+        len=0.75,  # Shortens the colorbar
+        thickness=20,  # Makes the bar thinner
+        xpad=10,  # Adds horizontal padding
+    )
+)
+
+# This sets the margins around the plot:r-right, t-top, l- left and b - bottom, also title_x for centering the title.
+
+figInfl.update_layout(
+    margin={"r": 20, "t": 60, "l": 20, "b": 60},
+    title_text="2013-2022 SADC Inflation Rate",
+    title_x=0.5,
+); 
+```
+
+
+
+```{python}
+
+# Plot horizontal bar chart using log scale on the x-axis to make it easier to visualise data because it is spanning a wide range of values.
+
+figBar = px.bar(
+    sadc_avg_inflation,
+    x="inflation_rate",
+    y="country",
+    orientation="h",  # horizontal bars
+    text="inflation_rate",
+    color="inflation_rate",
+    color_continuous_scale="greens",
+    title="Average Inflation Rate (2013–2022) - SADC Countries",
+    log_x=True,
+)
+
+# Applied the same colorbar adjustments to prevent the legend title from overlapping with the scale values:
+figBar.update_coloraxes(
+    colorbar=dict(
+        title="Inflation Rate (%)",
+        title_side="right",
+        title_font=dict(size=12),
+        tickfont=dict(size=10),
+        len=0.75,
+        thickness=20,
+        xpad=10,
+    )
+)
+
+# the x-axis label was not showing in full, it was clipped, so the code below addresses that:
+
+figBar.update_layout(
+    margin=dict(b=70),  # Increase bottom margin
+    xaxis=dict(
+        title=dict(
+            text="Average Inflation Rate (log_X)",
+            standoff=40,  # Pushes the title further from tick labels
+        )
+    ),
+    yaxis_title="Country",
+);
+
+```
+
+```{python}
+# SADC countries interest rate analysis
+# plotting box plots for all SADC countries interest rate
+
+boxplot = (
+    px.box(
+        merged_data_SADC,
+        x="country",
+        y="interest_rate",
+        color="country",
+        title="Interest rate for SADC countries (2013-2022)",
+    )
+    .update_layout(
+        showlegend=False,
+        xaxis=dict(
+            tickangle=-45, title=dict(text="Country", standoff=10), automargin=True
+        ),
+        yaxis=dict(title="Interest Rate (%)", automargin=True),
+        # xaxis_title="Country",
+        margin=dict(b=20),
+    )  # hide legends and rotate names on the x-axis
+    .add_annotation(
+        text="interest rate spread and distribution per country",
+        bordercolor="black",
+        borderwidth=2,
+    )
+)
+```
+
+```{python}
+# plot the interest rate choropleth for SADC countries only
+
+figInt = px.choropleth(
+    merged_data_SADC,
+    locations="country_code",
+    color="interest_rate",
+    hover_name="country",
+    animation_frame="year",
+    labels={"interest_rate": "Interest Rate (%)"},
+    title="SADC Interest Rate (2013-2022)",
+    color_continuous_scale="greens",
+    range_color=[
+        merged_data_SADC["interest_rate"].min(),
+        merged_data_SADC["interest_rate"].max(),
+    ],
+    projection="mercator",
+)
+
+figInt.update_geos(
+    fitbounds="locations", visible=False
+)  # ensures the choropleth is focused on SADC countries, hide the base map and the frame around the map.
+
+
+# The legend title was overlapping with the scale values, so the code below is to address that.
+
+figInt.update_coloraxes(
+    colorbar=dict(
+        title="Interest Rate (%)",
+        title_side="right",  # Moves title beside the scale
+        title_font=dict(size=12),  # Adjusts title font size
+        tickfont=dict(size=10),  # Adjusts tick label size
+        len=0.75,  # Shortens the colorbar
+        thickness=20,  # Makes the bar thinner
+        xpad=10,  # Adds horizontal padding
+    )
+)
+
+# This sets the margins around the plot:r-right, t-top, l- left and b - bottom, also title_x for centering the title
+figInt.update_layout(
+    margin={"r": 20, "t": 60, "l": 20, "b": 60},
+    title_text="2013-2022 SADC Interest Rate",
+    title_x=0.5,
+);
+
+```
+
+
+```{python}
+# Interactive SADC interest rate line plot with dropdown to select country of interest
+figTrend = px.line(
+    merged_data_SADC,
+    x="year",
+    y="interest_rate",
+    color="country_code",
+    symbol="country",
+    hover_name="country",
+    title="SADC Interest Rate Trends (2013–2022)",
+    markers=True,
+)
+
+# Add dropdown to toggle countries
+figTrend.update_layout(
+    updatemenus=[
+        dict(
+            active=0,
+            buttons=[
+                dict(
+                    label="All",
+                    method="update",
+                    args=[
+                        {"visible": [True] * merged_data_SADC["country"].nunique()},
+                        {"title": "All Countries"},
+                    ],
+                ),
+            ]
+            + [
+                dict(
+                    label=country,
+                    method="update",
+                    args=[
+                        {
+                            "visible": [
+                                c == country for c in merged_data_SADC["country"].unique()
+                            ]
+                        },
+                        {"title": country},
+                    ],
+                )
+                for country in merged_data_SADC["country"].unique()
+            ],
+            direction="down",
+            x=0.0,  # align left
+            y=1.05,  # place just below the chart title
+            showactive=True,
+        )
+    ],
+    showlegend=True,
+    margin=dict(b=50, r=50),
+    yaxis_title="Interest Rate (%)",
+    xaxis_title="Year",
+    legend={"x": 1.0, "y": 1.0},
+)
+
+# Ensure legend entries are compact (line + marker, not full-length)
+figTrend.update_traces(mode="lines+markers", marker=dict(size=6), line=dict(width=2));
+```
+
+```{python}
+# Analysing two indicators i.e. Interest Rate and Inflation Rate using sadc_inflation and sadc_interest datasets.
+
+## plotting a scatter map of interest rate vs inflation rate
+
+scatterplot = px.scatter(
+    merged_data_SADC,
+    x="interest_rate",
+    y="inflation_rate",
+    log_y=True,
+    log_x=True,
+    size="population",
+    hover_data={
+        "country": True,
+        "year": True,
+        "population": ":,.0f",  # formatted population with commas
+        "interest_rate": ":.2f",
+        "inflation_rate": ":.2f",
+    },
+    title="SADC countries Inflation Rate vs Interest Rate (2013-2022)",
+    color="country",
+    size_max=50,
+).update_xaxes(minor=dict(ticks="inside", ticklen=6, showgrid=True))
+
+# Add dropdown to filter by country
+countries = merged_data_SADC["country"].unique()
+
+scatterplot.update_layout(
+    updatemenus=[
+        dict(
+            active=0,
+            buttons=[
+                dict(
+                    label="All",
+                    method="update",
+                    args=[
+                        {"visible": [True] * merged_data_SADC["country"].nunique()},
+                        {"title": "All Countries"},
+                    ],
+                )
+            ]
+            + [
+                dict(
+                    label=country,
+                    method="update",
+                    args=[
+                        {
+                            "visible": [
+                                c == country
+                                for c in merged_data_SADC["country"].unique()
+                            ]
+                        },
+                        {"title": country},
+                    ],
+                )
+                for country in merged_data_SADC["country"].unique()
+            ],
+            direction="down",
+            x=0.6,
+            y=1.15,
+            showactive=True,
+        )
+    ],
+    xaxis_title="Interest Rate (log_X)",
+    yaxis_title="Inflation Rate (log_Y)",
+    margin=dict(r=50, b=60),
+);
+```
+
+
+# SADC Inflation Rate Analysis
+
+## Row1 {height = 15%}
+
+:::{.valuebox color="#ADF0D3" title="Min inflation rate in SADC (2013-2022)" icon="arrow-down-short"}
+
+`{python} min_rate_infl_str`
+
+`{python} min_country_year_infl`
+:::
+
+:::{.valuebox color="#98E4C4" title="Max inflation rate in SADC (2013-2022)" icon="arrow-up-short"}
+
+`{python} max_rate_infl_str`
+
+`{python} max_country_year_infl`
+:::
+
+:::{.valuebox color="#84D8B6" title="Namibia Avg inflation (2013-2022)" icon="map"} 
+
+`{python} nam_avg_inflation`
+:::
+
+## Row2 {height="70%"}
+
+### Column1 {width="60%"}
+```{python}
+# choropleth map - inflation rate
+figInfl
+```
+
+### Column2 {width="40%"}
+
+```{python}
+# Bar chart for SADC average inflation rate 
+figBar
+```
+
+## Row3 {height="15%"}
+
+### Column1 {width="60%"}
+::: {.card title="Inflation Insights"}
+<span style="font-size: 12px;">
+Inflation rates varied widely across SADC countries, with some showing three-digit inflation rate figures like Zimbabwe.  
+</span>
+:::
+
+### Column2 {width="40%"}
+
+> [!NOTE]  
+> The bar chart x-axis is transformed to a log-scale due to a wide range of values .
+
+
+
+# SADC Interest Rate Analysis
+
+## Row1 {height = 10%}
+
+:::{.valuebox color="#6FCCA7" title="Min interest rate in SADC (2013-2022)" icon="arrow-down-short"}
+
+`{python} min_rate_int_str`
+
+`{python} min_country_year_int`
+:::
+
+:::{.valuebox color="#5BC099" title="Max interest rate in SADC (2013-2022)" icon="arrow-up-short"}
+
+`{python} max_rate_int_str`
+
+`{python} max_country_year_int`
+:::
+
+:::{.valuebox color="#46B48A" title="Namibia Avg Interest Rate (2013-2022)" icon="map"} 
+
+`{python} nam_avg_interest`
+:::
+
+
+## Row2 {.tabset height="70%"}
+
+### Interest Rate Box Plot
+
+```{python}
+# SADC Interest Rate Box plot
+boxplot
+```
+
+### Interest Rate Line plot
+
+```{python}
+# SADC Interest rate line map
+figTrend
+```
+
+### Interest Rate Choropleth plot
+
+```{python}
+# SADC interest rate choropleth map 
+figInt
+```
+
+## Row3 {height="20%"}
+
+### Column1
+
+::: {.card title="Interest Rate Insights"}
+<span style="font-size: 12px;">
+from the Box plot, it can be seen that Zimbabwe, Madgascar & Malawi interest rates spreads are large compared to other countries.Zimbabwe shows extreme volatility, reflecting its economic instability during the period.
+</span>
+:::
+
+### Column2
+> On the line graph, use the drop down to select a specific country.Zimbabwe, Malawi, Madagascar, Mozabique, Angola and Congo have a notable variation in interest rate, compared to other SADC countries.
+
+
+# SADC Interest Rate, Inflation Rate & Population Analysis
+
+## Row1
+
+```{python}
+# SADC Inflation rate vs Interest rate scatter plot, with population
+scatterplot
+
+```
+
+
+## Row2
+
+::: {.card title="About these indicators: inflation & interest rates and population"}
+This scatter shows the relationship between inflation and interest rates, with population indicated by the bubbles size
+
+- Use the dropdown arrow to select country of interest
+
+- Log scales are used due to large variation between minimum and maximum values in datasets
+
+- Namibia shows relatively stable inflation compared to regional peers.
+
+- Zimbabwe has the most extreme values in both inflation and interest rate, but not the biggest nor the smallest population.
+
+- a conclusion cannot be drawn from the plot to deduce whether the relation between infaltion & interest rate exists or not. 
+
+- Theoretically, when inflation is high, central banks often raise     interest rates to make borrowing more expensive to bring inflation down.
+And when inflation is low or economy is slowing, central banks often lower interest rates to boost economic activity and prevent deflation.
+￼
+- the relationship can be complex due to different monetary policies and economies structure per country, and the impact may not be immediate but may be lagged due to different factors.
+
+:::
+
+# About
+
+## Row1
+
+### Column1 
+::: {.card title="Inflation Dataset (Long Format)"}
+
+```{python}
+# showing the first 10 rows
+inflation_rate_long.head(10)
+```
+:::
+
+### Column2
+::: {.card title="Interest Rate Dataset (Long Format)"}
+
+```{python}
+interest_rate_long.head(10)
+```
+:::
+
+### Column3
+
+::: {.card title="Population Dataset (Long Format)"}
+```{python}
+# showing the first 10 rows
+population_long.head(10)
+```
+:::
+
+## Row2
+
+### Column1
+
+::: {.card title="Merged Data (Long Format)"}
+```{python}
+# showing first 10 rows
+merged_data.head(10)
+```
+:::
+
+### Column2 
+
+::: {.card title="SADC countries (2013 - 2022) interest rate, inflation rate & population"}
+```{python}
+# merged dataset with interest rate, inflation rate and population for SADC countries
+merged_data_SADC
+```
+:::
+
+### Colummn3
+::: {.card title="Definitions"}
+Interest rate is the  borrowing cost of money from lenders.
+
+Inflation Rate is the changing of goods/service prices in the economy.
+
+Population is the number of people in a country being impacted on by the change in any of these macroeconomic factors, i.e. inflation and interest rates.
+:::

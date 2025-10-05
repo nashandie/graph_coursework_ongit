@@ -1,0 +1,101 @@
+---
+title: "India TB Pathways Analysis"
+format: html
+author: "Elise Openi Gustav"
+
+execute: 
+  echo: false
+---
+
+```{python}
+# Import packages
+
+import plotly
+import pandas as pd
+import itables
+
+```
+
+## India TB Pathways Dataset
+
+*The India TB Pathway dataset is based on a study conducted in Vellore district, Tamil Nadu, India. It examines the pre-diagnostic costs and health-seeking behaviour of 880 new adult pulmonary tuberculosis patients registered at Primary Health Centres (PHCs).*
+
+### Table displaying the first 10 rows of the India TB Pathways Dataset
+
+
+```{python}
+from itables import show
+tamil_nadu_data = pd.read_csv("india_tb_pathways_and_costs.csv")
+show(tamil_nadu_data.head(10))
+```
+
+### Displaying the Tamil Nadu of India map
+
+![Map of Tamil Nadu. Vellore district is in the north-east.](images/tndistrict_1.png)
+
+
+### Histogram showing the relationship between Smoking (Categorical) and Forms of TB  (Categorical) 
+*added a third variable - "sex" to make it more interesting*
+
+
+
+
+```{python}
+import plotly.express as px
+
+fig = px.histogram (tamil_nadu_data, x="Smoking", color="Form of TB", text_auto=True, facet_col="Sex")
+
+fig.update_layout (title=" Relationship between Smoking and Form of TB among patients")
+
+```
+The plot shows that from the data used, smoking is prevalent in Males than females and Ini smear+ form of TB is most common in both Smokers and Non-Smokers, compared to Ini Smear-.
+
+
+
+# OPTIONAL CHALLENGE
+
+
+```{python}
+
+# Determining the most common level of education among the patients
+
+common_education = tamil_nadu_data['Education'].mode()[0]
+education_counts = tamil_nadu_data['Education'].value_counts()
+common_education_count = int(education_counts[common_education])
+
+least_common_education = education_counts.idxmin()
+least_common_count = int(education_counts.min())
+
+```
+
+The most commom education level among patients was `{python} common_education` with `{python} common_education_count` occurences while `{python} least_common_education` is the least common with  `{python} least_common_count` counts.
+
+```{python}
+# Determining whether most patients are male or female
+
+common_sex = tamil_nadu_data['Sex'].mode()[0]
+sex_counts = tamil_nadu_data['Sex'].value_counts()
+common_sex_count = int(sex_counts[common_sex])
+
+```
+
+The most commom sex among patients was `{python} common_sex` with a total of `{python} common_sex_count`.
+
+```{python}
+# Determining the ages of the oldest and youngest patients
+max_age = int(tamil_nadu_data['Age'].max())
+min_age = int(tamil_nadu_data['Age'].min())
+
+```
+
+The oldest patient was `{python} max_age` years old, while the youngest patient was `{python} min_age` years old.
+
+
+```{python}
+# First Visit location
+common_location = tamil_nadu_data['first visit location'].mode()[0]
+location_counts = tamil_nadu_data['first visit location'].value_counts()
+common_location_count = int(location_counts[common_location])
+```
+
+The most visited location for the first visits was `{python} common_location` .

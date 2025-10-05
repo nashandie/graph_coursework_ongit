@@ -1,0 +1,503 @@
+---
+title: "Joining datasets"
+author: "Elise Openi Gustav"
+---
+
+# 21  Introduction to Joining Datasets
+
+## 21.1 Data & Packages
+
+```{python}
+import pandas as pd
+
+
+# TB incidence in Africa
+tb_2019_africa = pd.read_csv(
+    "https://raw.githubusercontent.com/the-graph-courses/idap_book/main/data/tb_incidence_2019.csv"
+) 
+
+# Health expenditure data
+health_exp_2019 = pd.read_csv(
+    "https://raw.githubusercontent.com/the-graph-courses/idap_book/main/data/health_expend_per_cap_2019.csv"
+)
+
+# Highest expenditure countries
+highest_exp = health_exp_2019.sort_values("expend_usd", ascending=False).head(70)
+
+# TB cases in children
+tb_cases_children = pd.read_csv(
+    "https://raw.githubusercontent.com/the-graph-courses/idap_book/main/data/tb_cases_children_2012.csv"
+).dropna()
+
+# Country continents data
+country_continents = pd.read_csv(
+    "https://raw.githubusercontent.com/the-graph-courses/idap_book/main/data/country_continents.csv"
+)
+
+# people data
+people = pd.DataFrame({"name": ["Alice", "Bob", "Charlie"], "age": [25, 32, 45]})
+
+# Test information
+test_info = pd.DataFrame(
+    {
+        "name": ["Alice", "Bob", "Charlie"],
+        "test_date": ["2023-06-05", "2023-08-10", "2023-07-15"],
+        "result": ["Negative", "Positive", "Negative"],
+    }
+)
+
+# Disordered test information
+test_info_disordered = pd.DataFrame(
+    {
+        "name": ["Bob", "Alice", "Charlie"],  # Bob in first row
+        "test_date": ["2023-08-10", "2023-06-05", "2023-07-15"],
+        "result": ["Positive", "Negative", "Negative"],
+    }
+)
+
+# Multiple test information
+test_info_multiple = pd.DataFrame(
+    {
+        "name": ["Alice", "Alice", "Bob", "Charlie"],
+        "test_date": ["2023-06-05", "2023-06-06", "2023-08-10", "2023-07-15"],
+        "result": ["Negative", "Negative", "Positive", "Negative"],
+    }
+)
+
+# Test information with different name
+test_info_different_name = pd.DataFrame(
+    {
+        "first_name": ["Alice", "Bob", "Charlie"],
+        "test_date": ["2023-06-05", "2023-08-10", "2023-07-15"],
+        "result": ["Negative", "Positive", "Negative"],
+    }
+)
+
+# Test information including Xavier
+test_info_xavier = pd.DataFrame(
+    {
+        "name": ["Alice", "Bob", "Xavier"],
+        "test_date": ["2023-06-05", "2023-08-10", "2023-05-02"],
+        "result": ["Negative", "Positive", "Negative"],
+    }
+)
+
+# Students data
+students = pd.DataFrame(
+    {"student_id": [1, 2, 3], "name": ["Alice", "Bob", "Charlie"], "age": [20, 22, 21]}
+)
+
+# Exam dates data
+exam_dates = pd.DataFrame(
+    {"student_id": [1, 3], "exam_date": ["2023-05-20", "2023-05-22"]}
+)
+
+# Employee details
+employee_details = pd.DataFrame(
+    {
+        "id_number": ["E001", "E002", "E003"],
+        "full_name": ["Emily", "Frank", "Grace"],
+        "department": ["HR", "IT", "Marketing"],
+    }
+)
+
+# Performance reviews
+performance_reviews = pd.DataFrame(
+    {
+        "employee_code": ["E001", "E002", "E003"],
+        "review_type": ["Annual", "Mid-year", "Annual"],
+        "review_date": ["2022-05-10", "2023-09-01", "2021-12-15"],
+    }
+)
+
+# Sales data
+sales_data = pd.DataFrame(
+    {
+        "salesperson_id": [1, 4, 8],
+        "product": ["Laptop", "Smartphone", "Tablet"],
+        "date_of_sale": ["2023-01-15", "2023-03-05", "2023-02-20"],
+    }
+)
+
+# Salesperson peoples
+salesperson_peoples = pd.DataFrame(
+    {
+        "salesperson_id": [1, 2, 3, 5, 8],
+        "name": ["Alice", "Bob", "Charlie", "Diana", "Eve"],
+        "age": [28, 45, 32, 55, 40],
+        "gender": ["Female", "Male", "Male", "Female", "Female"],
+    }
+)
+
+# Total sales data
+total_sales = pd.DataFrame(
+    {
+        "product": [
+            "Laptop",
+            "Desktop",
+            "Tablet",
+            "Smartphone",
+            "Smartwatch",
+            "Headphones",
+            "Monitor",
+            "Keyboard",
+            "Mouse",
+            "Printer",
+        ],
+        "total_units_sold": [9751, 136, 8285, 2478, 3642, 5231, 1892, 4267, 3891, 982],
+    }
+)
+
+# Product feedback data
+product_feedback = pd.DataFrame(
+    {
+        "product": [
+            "Laptop",
+            "Desktop",
+            "Tablet",
+            "Smartphone",
+            "Smartwatch",
+            "Headphones",
+            "Monitor",
+            "Gaming Console",
+            "Camera",
+            "Speaker",
+        ],
+        "n_positive_reviews": [1938, 128, 842, 1567, 723, 956, 445, 582, 234, 678],
+        "n_negative_reviews": [42, 30, 56, 89, 34, 28, 15, 11, 8, 25],
+    }
+)
+
+# Sales incidence data
+sales = pd.DataFrame(
+    {
+        "year": [2010, 2011, 2014, 2016, 2017],
+        "sales_count": [69890, 66507, 59831, 58704, 59151],
+    }
+)
+
+# Customer complaints data
+customer_complaints = pd.DataFrame(
+    {
+        "year": [2011, 2013, 2015, 2016, 2019],
+        "complaints_count": [1292, 1100, 1011, 940, 895],
+    }
+)
+
+
+employees = pd.DataFrame(
+    {"employee_id": [1, 2, 3], "name": ["John", "Joy", "Khan"], "age": [32, 28, 40]}
+)
+
+training_sessions = pd.DataFrame(
+    {
+        "employee_id": [1, 2, 3],
+        "training_date": ["2023-01-20", "2023-02-20", "2023-05-15"],
+    }
+)
+
+customer_details = pd.DataFrame(
+    {
+        "id_number": ["A001", "B002", "C003"],
+        "full_name": ["Alice", "Bob", "Charlie"],
+        "address": ["123 Elm St", "456 Maple Dr", "789 Oak Blvd"],
+    }
+)
+
+# Order Records
+order_records = pd.DataFrame(
+    {
+        "customer_code": ["A001", "B002", "C003"],
+        "product_type": ["Electronics", "Books", "Clothing"],
+        "order_date": ["2022-05-10", "2023-09-01", "2021-12-15"],
+    }
+)
+```
+
+## 21.4 Why Do We Need Joins?
+
+```{python}
+people
+```
+
+```{python}
+test_info
+```
+
+Concatenating the dataframes horizontally using pd.concat():
+
+```{python}
+pd.concat([people, test_info], axis=1)
+```
+
+```{python}
+test_info_disordered
+```
+
+When two datasets are not already aligned:
+
+```{python}
+pd.concat([people, test_info_disordered], axis=1)
+```
+
+When an entity appears more than once in one dataset:
+
+```{python}
+test_info_multiple
+```
+
+Concatenating this with the people dataset, we’ll get mismatched data due to differing row counts:
+
+```{python}
+pd.concat([people, test_info_multiple], axis=1)
+```
+
+Joining datasets using the Pandas pd.merge() function
+
+```{python}
+pd.merge(people, test_info_disordered)
+```
+
+It works when there are multiple test rows per individual:
+
+```{python}
+pd.merge(people, test_info_multiple)
+```
+
+## 21.5 pd.merge() syntax
+
+```{python}
+# left and right
+pd.merge(left=people, right=test_info)  # keyword arguments
+pd.merge(people, test_info)  # positional arguments
+```
+
+```{python}
+# on argument is optional if the column key is the same in both dataframes
+pd.merge(people, test_info)
+pd.merge(people, test_info, on="name")
+```
+
+```{python}
+test_info_different_name
+```
+
+Try to join test_info_different_name with our original people dataset, we will encounter an error:
+
+```{python}
+pd.merge(people, test_info_different_name)
+```
+
+Specify which columns to join on using **'left_on'** and **'right_on'**.
+
+```{python}
+pd.merge(people, test_info_different_name, left_on='name', right_on='first_name')
+```
+
+## 21.6 Practice Q: Join Employees and Training Sessions
+
+
+```{python}
+employees
+```
+
+```{python}
+training_sessions
+```
+
+```{python}
+pd.merge(employees, training_sessions)
+```
+
+## 21.7 Practice Q: Join with on Argument
+Join the **'customer_details'** and **'order_records'** datasets
+
+```{python}
+customer_details
+```
+
+```{python}
+order_records
+```
+```{python}
+pd.merge(customer_details, order_records, left_on='id_number', right_on='customer_code')
+```
+
+## 21.8 Types of joins
+
+There are different join types with specific behaviors: left, right, inner, and outer
+
+## 21.9 left join
+
+```{python}
+people
+```
+
+```{python}
+test_info_xavier
+```
+
+```{python}
+pd.merge(people, test_info_xavier, how='left')
+```
+
+ Flip the dataframes:
+
+ ```{python}
+ pd.merge(test_info_xavier, people, on='name', how='left')
+ ```
+
+ ## 21.10 Practice Q: Left Join Students and Exam Dates
+
+```{python}
+students
+```
+
+```{python}
+exam_dates
+```
+
+```{python}
+pd.merge(students, exam_dates, how='left')
+```
+
+## 21.11 Analysing African TB Incidence and Health Expenditure
+
+Data on the TB incidence rate per 100,000 people for some African countries, from the WHO:
+
+```{python}
+tb_2019_africa
+```
+
+Data on health expenditure per capita in USD, also from the WHO, for countries from all continents:
+
+```{python}
+health_exp_2019
+```
+
+Analyze how TB incidence in African countries varies with government health expenditure per capita.
+
+```{python}
+tb_health_exp_joined = pd.merge(tb_2019_africa, health_exp_2019, on='country', how='left')
+tb_health_exp_joined
+```
+
+Check if any rows in **'tb_2019_africa'** did not have a match in **'health_exp_2019'** by filtering for NaN values:
+
+```{python}
+tb_health_exp_joined.query("expend_usd.isna()")
+```
+
+## 21.12 Practice Q: Left Join TB Cases and Continents
+
+The first, tb_cases_children, contains the number of TB cases in under 15s in 2012, by country:
+
+```{python}
+tb_cases_children
+```
+
+**'country_continents'**, lists all countries and their corresponding region and continent
+
+```{python}
+country_continents
+```
+
+
+```{python}
+tb_cases_continents_joined = pd.merge(country_continents, tb_cases_children,left_on='country.name.en', right_on='country',how='left')
+tb_cases_continents_joined
+```
+
+
+## 21.13 right join
+
+```{python}
+people
+test_info_xavier
+```
+
+```{python}
+pd.merge(test_info_xavier, people, on='name', how='right')
+```
+
+```{python}
+# Here, right join prioritizes the right dataframe, people
+pd.merge(test_info_xavier, people, on='name', how='right')
+```
+
+```{python}
+# Here, left join prioritizes the left dataframe, again people
+pd.merge(people, test_info_xavier, on='name', how='left')
+```
+
+## 21.14 inner join
+
+Rows are only kept if the joining values are present in both dataframes:
+
+```{python}
+people
+```
+
+```{python}
+test_info_xavier
+```
+
+```{python}
+pd.merge(people, test_info_xavier, on='name', how='inner')
+```
+
+## 21.15 Practice Q: Inner Join Products
+
+Use an **'inner join'** to combine the datasets.
+
+```{python}
+total_sales
+```
+
+```{python}
+product_feedback
+```
+
+```{python}
+sales_feedback_merged = pd.merge(total_sales, product_feedback, on='product', how='inner')
+sales_feedback_merged
+```
+
+**There are 7 products in common between the two datasets.**
+
+Calculating the ratio:
+
+```{python}
+sales_feedback_merged['ratio'] = sales_feedback_merged['n_positive_reviews'] / sales_feedback_merged['total_units_sold']
+sales_feedback_merged
+```
+
+**Desktops has the highest ratio of 0.941176 of positive reviews to units sold.**
+
+## 21.16 outer join
+Outer join is that it retains all records, regardless of whether or not there is a match between the two datasets.
+
+```{python}
+people
+test_info_xavier
+```
+
+```{python}
+pd.merge(people, test_info_xavier, on='name', how='outer')
+```
+
+## 21.17 Practice Q: Join Sales Data
+
+```{python}
+sales
+```
+
+```{python}
+customer_complaints
+```
+
+```{python}
+pd.merge(sales, customer_complaints, on='year', how='outer')
+```
+
+

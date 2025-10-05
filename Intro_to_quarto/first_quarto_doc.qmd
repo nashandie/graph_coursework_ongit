@@ -1,0 +1,78 @@
+---
+title: "My First Quarto Doc"
+author: "Elise Gustav"
+format: 
+  html:
+    embed-resources: true
+execute:
+  echo: false
+---
+
+# Level 1 Header
+
+
+This is text with *italics* and **bold**.
+
+You can define bulleted lists:
+
+- First element
+- Second element
+
+you can also add [links](https://thegraphcourses.org)
+
+you can also add images 
+
+![description of the image](images/tgc_unity.webp)
+
+## Leve 2 Header
+
+### Level 3 Header
+
+
+
+```{python}
+#| echo: false
+#| eval: false
+2+2
+```
+```{python}
+3*4
+for num in [1,2,3]:
+    print(num)
+4*4
+```
+
+
+# Displaying tables
+
+```{python}
+import plotly.express as px
+from itables import show
+tips = px.data.tips()
+show(tips)
+```
+
+# Displaying Plots
+
+```{python}
+px.violin(tips, x="tip", y="sex")
+```
+
+# Displaying static plots
+
+```{python}
+import os
+import plotly.express as px
+
+
+# Ensure output folder exists
+os.makedirs("outputs", exist_ok=True)
+
+# Load data and plot
+tips = px.data.tips()
+tips_sex = px.violin(tips, x="tip", y="sex")
+tips_sex.write_image("outputs/tips_by_sex.png")
+
+```
+
+![](outputs/tips_by_sex.png)

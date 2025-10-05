@@ -1,0 +1,49 @@
+---
+title: "Gapminder Practice 1"
+author: "Elise Openi Gustav"
+format: dashboard
+---
+
+```{python}
+import plotly.express as px
+p=px.line(y=[1,2,3,4])
+
+```
+
+
+
+
+# Page 1
+
+## Row1 {height="30%"}
+
+### Column1 {width="33.33%"}
+```{python}
+p
+```
+
+### Column2 {width="33.33%"}
+
+```{python}
+p
+```
+
+### Column3 {width="33.33%"}
+
+```{python}
+p
+```
+
+## Row2 {height="70%"}
+
+### Column1 {width="70%"}
+
+```{python}
+p
+```
+
+### Column2 {width="30%"}
+
+```{python}
+p
+```

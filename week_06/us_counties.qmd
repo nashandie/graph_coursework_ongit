@@ -1,0 +1,147 @@
+---
+title: Transforming variables with Panda
+author: Elise Openi Gustav
+---
+```{python}
+import pandas as pd
+pd.options.mode.copy_on_write = True
+
+counties = pd.read_csv("data/us_counties_data.csv")
+counties
+```
+
+
+```{python}
+# Small subset for illustration
+area_df = counties[["county", "area_sq_miles", "pop_20"]]
+area_df
+```
+
+```{python}
+area_df["area_sq_km"] = area_df["area_sq_miles"] * 2.59
+area_df
+```
+
+
+```{python}
+# Convert area to hectares as well
+area_df["area_hectares"] = area_df["area_sq_miles"] * 259
+area_df
+```
+# 17.5.1 Practice Q: Area in Acres
+
+```{python}
+area_df["area_acres"] = area_df["area_sq_miles"] * 640
+area_df
+```
+
+# 17.6 Modifying Existing Variables
+
+```{python}
+area_df["area_sq_km"] = area_df["area_sq_km"].round(1)
+area_df
+```
+
+# 17.6.1 Practice Q: Rounding area_acres
+
+```{python}
+area_df["area_acres"] = area_df["area_acres"].round(1)
+area_df
+```
+
+# 17.7 Calculations with Multiple Variables
+
+```{python}
+area_df["pop_per_sq_km"] = area_df["pop_20"] / area_df["area_sq_km"]
+area_df
+```
+
+
+```{python}
+area_df["pop_per_sq_km"] = area_df["pop_20"] / area_df["area_sq_km"]
+area_df
+```
+
+```{python}
+area_df["pop_per_sq_km"] = area_df["pop_20"] / area_df["area_sq_km"]
+area_df["pop_per_sq_km"] = area_df["pop_per_sq_km"].round(1)
+area_df
+```
+
+```{python}
+# Sort by population density in descending order
+area_df = area_df.sort_values("pop_per_sq_km", ascending=False)
+area_df
+```
+# 17.7.1 Practice Q: Calculate Foreign-Born Percentage
+
+```{python}
+counties["foreign_born_percent"] = (counties["foreign_born_num"] * 100 / counties["pop_20"]).round(1)
+counties
+
+# Sort by foreign_born_percent in descending order
+counties = counties.sort_values("foreign_born_percent", ascending=False)
+counties
+```
+Two counties that have the highest percentage of foreign-born residents are. Miami-Dade, FL with 53.9%, and Queens, NY with 46.9%
+
+# 17.8 Creating Boolean Variables
+
+```{python}
+changes_df = counties[["county", "pop_change_2010_2020", "pct_emp_change_2010_2021"]]
+changes_df
+```
+
+
+```{python}
+changes_df["pop_change_2010_2020"] > 0
+```
+
+```{python}
+changes_df["pop_increase"] = changes_df["pop_change_2010_2020"] > 0
+changes_df
+```
+
+
+```{python}
+# create a Boolean variable emp_increase for employment change.
+changes_df["emp_increase"] = changes_df["pct_emp_change_2010_2021"] > 0
+changes_df
+```
+
+
+```{python}
+# Counties where population increased but employment decreased
+pop_up_emp_down = changes_df.query("pop_increase == True & emp_increase == False")
+pop_up_emp_down
+```
+
+```{python}
+# Counties where population increased but employment decreased
+pop_up_emp_down = changes_df.query("pop_increase & ~(emp_increase)")
+pop_up_emp_down
+```
+
+# 17.8.1 Practice Q: Categorize Counties by Foreign-Born Population
+
+```{python}
+counties["foreign_born_pct_gt_30"] = counties["foreign_born_percent"] > 30
+counties
+
+counties.query("foreign_born_pct_gt_30 == True")
+```
+
+# 17.9 The Copy-on-Write Warning
+
+```{python}
+pd.set_option("mode.copy_on_write", False)
+
+# Create a small subset of our data
+subset = counties.query("state == 'AL'")
+subset
+```
+
+```{python}
+# Modify the subset
+subset['unemp_20'] = subset['unemp_20'].round(0)
+```

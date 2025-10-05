@@ -1,0 +1,100 @@
+---
+title: "Gapminder 2007"
+author: "Elise Openi Gustav"
+format: dashboard
+theme: minty
+---
+
+```{python}
+import plotly.express as px
+p=px.line(y=[1,2,3,4])
+
+```
+
+# Layouts
+
+## Row1 {height="30%"}
+
+### Column1 {width="20%"}
+```{python}
+p
+```
+
+### Column2 {width="80%"}
+
+```{python}
+p
+```
+
+## Row2 {height="70%"}
+
+```{python}
+p
+```
+
+# Tabsets
+
+## Row1 {height="30%"}
+
+### Column1 {.tabset width="20%"}
+
+#### Tab 1
+```{python}
+p
+```
+
+#### Tab 2
+
+Hello World
+
+### Column2 {width="80%"}
+
+```{python}
+p
+```
+
+## Row2 {.tabset height="70%"}
+
+### Tab 1
+
+```{python}
+p
+```
+
+### Tab 2
+
+Hello World
+
+# Value Boxes
+
+```{python}
+
+tips = px.data.tips()
+num_cols = tips.shape[1]
+num_rows = tips.shape[0]
+```
+
+## {height="20%"}
+
+::: {.valuebox title = "Columns" color="primary" icon="heart"}
+`{python} num_cols` 
+
+Number of columns of 'tips' dataset
+:::
+
+::: {.valuebox title = "Rows" color="#32CD32" icon="apple"}
+`{python} num_rows`
+
+Number of rows of 'tips' dataset
+:::
+
+::: {.valuebox title = "Small Number" colour="secondary" icon="binoculars"}
+1
+:::
+
+
+##
+
+```{python}
+p
+```

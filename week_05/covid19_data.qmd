@@ -1,0 +1,156 @@
+
+# title: Week_05 - subsetting columns with PANDA
+# author: Elise Openi Gustav
+
+
+```{python}
+import pandas as pd
+
+yao = pd.read_csv("data/yaounde_data.csv")
+yao
+```
+
+
+# select the age and sex columns
+```{python}
+yao[["age", "sex"]]
+```
+
+
+```{python}
+yao["age"] # does not return a DataFrame
+```
+
+
+```{python}
+yao[["age"]]  # returns a DataFrame
+```
+
+
+```{python}
+yao_subset = yao[["age", "sex", "igg_result"]]
+yao_subset
+```
+
+# overwrite a DataFrame
+
+```{python}
+yao_subset = yao_subset[["age"]]
+yao_subset
+```
+
+# 15.6.1 Practice Q: Select Columns with []
+
+```{python}
+yao_weight_height=yao[["weight_kg", "height_cm"]]
+yao_weight_height
+```
+
+# .take fucntion -returns specified rows of the DataFrame.
+```{python}
+(yao.take([0,2,4,6,8,10]))
+```
+
+
+# .loc function - selects all rows where weight is greater than 90 kg.
+```{python}
+yao.loc[yao['weight_kg'] > 90]
+```
+
+# drop function
+
+```{python}
+yao.drop(columns=["age"])
+```
+
+
+```{python}
+yao_subset = yao.drop(columns=["age", "sex"])
+yao_subset
+```
+
+# 15.7.1 Practice Q: Drop Columns with drop()
+```{python}
+yao_no_education_consultation = yao.drop(columns = ["highest_education","consultation"])
+yao_no_education_consultation 
+```
+
+# Using filter() to select columns by regex
+
+```{python}
+yao.filter(regex="^ig")
+```
+
+
+```{python}
+yao.filter(regex="result$")
+```
+
+# 15.8.1 Practice Q: Select Columns with Regex
+
+
+```{python}
+yao_is_columns = yao.filter(regex="^is")
+yao_is_columns
+```
+
+# 15.9 Change column names with rename()
+
+
+```{python}
+yao.rename(columns={"age": "patient_age", "sex": "patient_sex"})
+```
+
+# 15.9.1 Practice Q: Rename Columns with rename()
+
+```{python}
+yao_age_cat=yao.rename(columns={"age_category": "age_cat"})
+yao_age_cat
+```
+# 15.10 Cleaning messy column names
+
+
+```{python}
+test_df = pd.DataFrame(
+    {"good_name": range(3), "bad name": range(3), "bad*@name*2": range(3)}
+)
+test_df
+```
+
+```{python}
+test_df.good_name  # this works
+```
+
+```{python}
+test_df.bad name # this does not work
+```
+
+
+```{python}
+clean_names = test_df.columns.str.replace(r'[^a-zA-Z0-9]', '_', regex=True)
+```
+
+
+```{python}
+test_df.columns = clean_names
+test_df
+```
+
+# 15.10.1 Practice Q: Clean Column Names with Regex
+
+```{python}
+
+# Original DataFrame
+cleaning_practice = pd.DataFrame(
+    {"Aloha": range(3), "Bell Chart": range(3), "Animals@the zoo": range(3)}
+)
+cleaning_practice
+
+# Clean column names 
+clean_names = cleaning_practice.columns.str.replace(r'[^a-zA-Z0-9]', '_', regex=True)
+
+# Create a new cleaned DataFrame
+cleaning_practice.columns = clean_names
+cleaning_practice
+```
+
