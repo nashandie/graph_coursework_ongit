@@ -504,6 +504,8 @@ figInt.update_coloraxes(
 
 # This sets the margins around the plot:r-right, t-top, l- left and b - bottom, also title_x for centering the title
 figInt.update_layout(
+    autosize=True,
+    height=700,
     margin={"r": 20, "t": 60, "l": 20, "b": 60},
     title_text="2013-2022 SADC Interest Rate",
     title_x=0.5,
