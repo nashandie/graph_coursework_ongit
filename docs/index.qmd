@@ -445,7 +445,7 @@ boxplot = (
         x="country",
         y="interest_rate",
         color="country",
-        title="Interest rate for SADC countries (2013-2022)",
+        title="Interest rate for SADC countries (2013-2022) - BoxPlot",
     )
     .update_layout(
         showlegend=False,
@@ -722,7 +722,7 @@ Inflation rates varied widely across SADC countries, with some showing three-dig
 :::
 
 
-## Row2 {.tabset height="70%"}
+## Row2
 
 ### Interest Rate Box Plot
 
@@ -731,17 +731,19 @@ Inflation rates varied widely across SADC countries, with some showing three-dig
 boxplot
 ```
 
-### Interest Rate Line plot
+### {.tabset }
+
+#### SADC Interest Rate Line plot
 
 ```{python}
 # SADC Interest rate line map
 figTrend
 ```
 
-### Interest Rate Choropleth plot
+#### SADC Interest Rate Choropleth 
 
 ```{python}
-# SADC interest rate choropleth map 
+# SADC Interest Rate Choropleth map
 figInt
 ```
 
