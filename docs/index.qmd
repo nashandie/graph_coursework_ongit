@@ -583,8 +583,6 @@ scatterplot = px.scatter(
     merged_data_SADC,
     x="interest_rate",
     y="inflation_rate",
-    log_y=True,
-    log_x=True,
     size="population",
     hover_data={
         "country": True,
@@ -637,9 +635,32 @@ scatterplot.update_layout(
             showactive=True,
         )
     ],
-    xaxis_title="Interest Rate (log_X)",
-    yaxis_title="Inflation Rate (log_Y)",
-    margin=dict(r=50, b=60),
+    xaxis_title="Interest Rate (%)",
+    yaxis_title="Inflation Rate (%)",
+    margin=dict(r=150, b=60),
+    legend=dict(
+        font=dict(size=6),
+        x=0.98,
+        y=1,
+        bgcolor="rgba(255,255,255,0.5)",
+        bordercolor="Black",
+    ),
+)
+
+# Add a single annotation
+scatterplot.update_layout(
+    annotations=[
+        dict(
+            text="Bubbles reprent population size",
+            showarrow=True,
+            arrowhead=2,
+            ax=0,
+            ay=-40,
+            font=dict(size=12, color="black"),
+            bgcolor="rgba(255,255,255,0.8)",
+            bordercolor="black",
+        )
+    ]
 );
 ```
 
@@ -778,8 +799,6 @@ scatterplot
 This scatter shows the relationship between inflation and interest rates, with population indicated by the bubbles size
 
 - Use the dropdown arrow to select country of interest
-
-- Log scales are used due to large variation between minimum and maximum values in datasets
 
 - Namibia shows relatively stable inflation compared to regional peers.
 
